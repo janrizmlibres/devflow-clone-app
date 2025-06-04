@@ -1,5 +1,3 @@
-import { Button } from "@/components/ui/button";
-
 const Home = () => {
   return (
     <>
@@ -11,8 +9,6 @@ const Home = () => {
           Welcome World!
         </h1>
       </div>
-
-      <Button>This is button</Button>
     </>
   );
 };
