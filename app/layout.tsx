@@ -4,7 +4,6 @@ import type { Metadata } from "next";
 import { Inter, Space_Grotesk as SpaceGrotesk } from "next/font/google";
 import React from "react";
 
-import Navbar from "@/components/navigation/navbar";
 import ThemeProvider from "@/context/Theme";
 
 const inter = Inter({
@@ -37,7 +36,6 @@ export default function RootLayout({
         className={`${inter.variable} ${spaceGrotesk.variable} antialiased`}
       >
         <ThemeProvider attribute="class" disableTransitionOnChange>
-          <Navbar />
           {children}
         </ThemeProvider>
       </body>
