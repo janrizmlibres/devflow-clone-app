@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Inter, Space_Grotesk as SpaceGrotesk } from "next/font/google";
 import React from "react";
 
+import { Toaster } from "@/components/ui/sonner";
 import ThemeProvider from "@/context/Theme";
 
 const inter = Inter({
@@ -37,6 +38,7 @@ export default function RootLayout({
       >
         <ThemeProvider attribute="class" disableTransitionOnChange>
           {children}
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

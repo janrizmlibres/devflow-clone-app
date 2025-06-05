@@ -44,6 +44,16 @@
 
 :root {
   --radius: 0.5rem;
+
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.129 0.042 264.695);
+  --border: oklch(0.929 0.013 255.508);
+}
+
+.dark {
+  --popover: oklch(0.208 0.042 265.755);
+  --popover-foreground: oklch(0.984 0.003 247.858);
+  --border: oklch(1 0 0 / 10%);
 }
 
 @theme inline {
