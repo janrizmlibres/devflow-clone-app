@@ -2,7 +2,6 @@ import "./globals.css";
 
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk as SpaceGrotesk } from "next/font/google";
-import React from "react";
 
 import { Toaster } from "@/components/ui/sonner";
 import ThemeProvider from "@/context/Theme";
@@ -26,11 +25,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+const RootLayout = async ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -38,9 +33,11 @@ export default function RootLayout({
       >
         <ThemeProvider attribute="class" disableTransitionOnChange>
           {children}
-          <Toaster />
+          <Toaster position="top-center" richColors />
         </ThemeProvider>
       </body>
     </html>
   );
-}
+};
+
+export default RootLayout;
