@@ -34,7 +34,6 @@ const AuthForm = <T extends FieldValues>({
   formType,
   schema,
   defaultValues,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onSubmit,
 }: AuthFormProps<T>) => {
   // 1. Define your form.
@@ -44,8 +43,9 @@ const AuthForm = <T extends FieldValues>({
   });
 
   // 2. Define a submit handler.
-  const handleSubmit: SubmitHandler<T> = async () => {
+  const handleSubmit: SubmitHandler<T> = (data) => {
     // TODO: Authenticate user
+    onSubmit(data);
   };
 
   const buttonText = formType === "SIGN_IN" ? "Sign In" : "Sign Up";
