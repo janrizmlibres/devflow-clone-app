@@ -46,13 +46,13 @@ const MobileNavigation = async () => {
           </p>
         </Link>
 
-        <div className="no-scrollbar flex h-[calc(100vh-80px)] flex-col justify-between overflow-y-auto pt-16">
-          <section className="mb-6 flex flex-col gap-6">
+        <div className="no-scrollbar flex h-[calc(100vh-80px)] flex-col justify-between gap-6 overflow-y-auto pt-16">
+          <section className="flex flex-col gap-6">
             <NavLinks isMobileNav />
           </section>
 
           {!session && (
-            <div className="mt-6 flex flex-col gap-3">
+            <div className="flex flex-col gap-3">
               <SheetClose asChild>
                 <Link href={ROUTES.SIGN_IN}>
                   <Button className="min-h-[41px] w-full rounded-lg btn-secondary px-4 py-3 small-medium shadow-none">
