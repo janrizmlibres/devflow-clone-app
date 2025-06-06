@@ -24,7 +24,6 @@ const Navbar = () => {
 
       <div className="flex-between gap-5">
         <Theme />
-
         <MobileNavigation />
       </div>
     </nav>

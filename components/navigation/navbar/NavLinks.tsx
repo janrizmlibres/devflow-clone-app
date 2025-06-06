@@ -32,6 +32,7 @@ const NavLinks = ({ isMobileNav = false }: { isMobileNav?: boolean }) => {
               isActive
                 ? "rounded-lg text-light-900 primary-gradient"
                 : "text-dark300_light900",
+              !isMobileNav && "max-lg:flex-center",
               "flex-start gap-4 bg-transparent p-4"
             )}
           >
