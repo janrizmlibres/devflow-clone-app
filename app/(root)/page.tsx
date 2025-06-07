@@ -1,8 +1,10 @@
 import Link from "next/link";
+import { SearchParams } from "nuqs/server";
 
 import LocalSearch from "@/components/search/LocalSearch";
 import { Button } from "@/components/ui/button";
 import ROUTES from "@/constants/routes";
+import { loadSearchParams } from "@/lib/loaders";
 
 const questions = [
   {
@@ -53,15 +55,15 @@ const questions = [
   },
 ];
 
-interface SearchParams {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+interface PageProps {
+  searchParams: Promise<SearchParams>;
 }
 
-const Home = async ({ searchParams }: SearchParams) => {
-  const { query = "" } = await searchParams;
+const Home = async ({ searchParams }: PageProps) => {
+  const { query } = await loadSearchParams(searchParams);
 
   const filteredQuestions = questions.filter((question) =>
-    question.title.toLowerCase().includes((query as string)?.toLowerCase())
+    question.title.toLowerCase().includes(query.toLowerCase())
   );
 
   return (
