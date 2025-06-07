@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { SearchParams } from "nuqs/server";
 
+import QuestionCard from "@/components/cards/QuestionCard";
 import HomeFilter from "@/components/filters/HomeFilter";
 import LocalSearch from "@/components/search/LocalSearch";
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,8 @@ const questions = [
     author: {
       _id: "1",
       name: "John Doe",
+      image:
+        "https://static.vecteezy.com/system/resources/previews/002/002/403/non_2x/man-with-beard-avatar-character-isolated-icon-free-vector.jpg",
     },
     upvotes: 10,
     answers: 5,
@@ -41,13 +44,15 @@ const questions = [
         name: "NextJS",
       },
       {
-        _id: "4",
+        _id: "2",
         name: "JavaScript",
       },
     ],
     author: {
       _id: "2",
       name: "Jane Smith",
+      image:
+        "https://static.vecteezy.com/system/resources/previews/002/002/403/non_2x/man-with-beard-avatar-character-isolated-icon-free-vector.jpg",
     },
     upvotes: 20,
     answers: 10,
@@ -98,7 +103,7 @@ const Home = async ({ searchParams }: PageProps) => {
       <HomeFilter />
       <div className="mt-10 flex w-full flex-col gap-6">
         {filteredQuestions.map((question) => (
-          <h1 key={question._id}>{question.title}</h1>
+          <QuestionCard key={question._id} question={question} />
         ))}
       </div>
     </>

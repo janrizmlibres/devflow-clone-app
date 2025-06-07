@@ -7,6 +7,7 @@ import { Fragment } from "react";
 
 import { SheetClose } from "@/components/ui/sheet";
 import { sidebarLinks } from "@/constants";
+import ROUTES from "@/constants/routes";
 import { cn } from "@/lib/utils";
 
 const NavLinks = ({ isMobileNav = false }: { isMobileNav?: boolean }) => {
@@ -20,8 +21,8 @@ const NavLinks = ({ isMobileNav = false }: { isMobileNav?: boolean }) => {
           (pathname.includes(item.route) && item.route.length > 1) ||
           pathname === item.route;
 
-        if (item.route === "/profile") {
-          if (userId) item.route = `${item.route}/${userId}`;
+        if (item.label === "Profile") {
+          if (userId) item.route = ROUTES.PROFILE(userId.toString());
           else return null;
         }
 

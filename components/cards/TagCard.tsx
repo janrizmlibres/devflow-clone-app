@@ -7,12 +7,11 @@ import { getDeviconClassName } from "@/lib/utils";
 interface Props {
   _id: string;
   name: string;
-  questions: number;
+  questions?: number;
   showCount?: boolean;
   compact?: boolean;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const TagCard = ({ _id, name, questions, showCount, compact }: Props) => {
   const iconClass = getDeviconClassName(name);
 
