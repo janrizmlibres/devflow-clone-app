@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { SearchParams } from "nuqs/server";
 
+import HomeFilter from "@/components/filters/HomeFilter";
 import LocalSearch from "@/components/search/LocalSearch";
 import { Button } from "@/components/ui/button";
 import ROUTES from "@/constants/routes";
@@ -37,11 +38,11 @@ const questions = [
     tags: [
       {
         _id: "3",
-        name: "Next.js",
+        name: "NextJS",
       },
       {
         _id: "4",
-        name: "React",
+        name: "JavaScript",
       },
     ],
     author: {
@@ -60,11 +61,19 @@ interface PageProps {
 }
 
 const Home = async ({ searchParams }: PageProps) => {
-  const { query } = await loadSearchParams(searchParams);
+  const { query, filter } = await loadSearchParams(searchParams);
 
-  const filteredQuestions = questions.filter((question) =>
-    question.title.toLowerCase().includes(query.toLowerCase())
-  );
+  const filteredQuestions = questions.filter((question) => {
+    const matchesQuery = question.title
+      .toLowerCase()
+      .includes(query.toLowerCase());
+    const matchesFilter = filter
+      ? question.tags.some(
+          (tag) => tag.name.toLowerCase() === filter.toLowerCase()
+        )
+      : true;
+    return matchesQuery && matchesFilter;
+  });
 
   return (
     <>
@@ -86,7 +95,7 @@ const Home = async ({ searchParams }: PageProps) => {
           className="flex-1"
         />
       </section>
-      {/* HomeFilter */}
+      <HomeFilter />
       <div className="mt-10 flex w-full flex-col gap-6">
         {filteredQuestions.map((question) => (
           <h1 key={question._id}>{question.title}</h1>
