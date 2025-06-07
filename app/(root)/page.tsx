@@ -4,7 +4,66 @@ import LocalSearch from "@/components/search/LocalSearch";
 import { Button } from "@/components/ui/button";
 import ROUTES from "@/constants/routes";
 
-const Home = async () => {
+const questions = [
+  {
+    _id: "1",
+    title: "How to learn React?",
+    description: "I am new to React and need some guidance on how to start.",
+    tags: [
+      {
+        _id: "1",
+        name: "React",
+      },
+      {
+        _id: "2",
+        name: "JavaScript",
+      },
+    ],
+    author: {
+      _id: "1",
+      name: "John Doe",
+    },
+    upvotes: 10,
+    answers: 5,
+    views: 100,
+    createdAt: new Date(),
+  },
+  {
+    _id: "2",
+    title: "What is the best way to learn Next.js?",
+    description: "Looking for resources and tips to learn Next.js effectively.",
+    tags: [
+      {
+        _id: "3",
+        name: "Next.js",
+      },
+      {
+        _id: "4",
+        name: "React",
+      },
+    ],
+    author: {
+      _id: "2",
+      name: "Jane Smith",
+    },
+    upvotes: 20,
+    answers: 10,
+    views: 200,
+    createdAt: new Date(),
+  },
+];
+
+interface SearchParams {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+const Home = async ({ searchParams }: SearchParams) => {
+  const { query = "" } = await searchParams;
+
+  const filteredQuestions = questions.filter((question) =>
+    question.title.toLowerCase().includes((query as string)?.toLowerCase())
+  );
+
   return (
     <>
       <section className="flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
@@ -25,12 +84,11 @@ const Home = async () => {
           className="flex-1"
         />
       </section>
-      HomeFilter
+      {/* HomeFilter */}
       <div className="mt-10 flex w-full flex-col gap-6">
-        <p>Question Card 1</p>
-        <p>Question Card 2</p>
-        <p>Question Card 3</p>
-        <p>Question Card 4</p>
+        {filteredQuestions.map((question) => (
+          <h1 key={question._id}>{question.title}</h1>
+        ))}
       </div>
     </>
   );
