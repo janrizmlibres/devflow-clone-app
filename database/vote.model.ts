@@ -2,16 +2,16 @@ import { model, models, Schema, Types } from "mongoose";
 
 export interface IVote {
   author: Types.ObjectId;
-  id: Types.ObjectId;
-  type: "question" | "answer";
+  actionId: Types.ObjectId;
+  actionType: "question" | "answer";
   voteType: "upvote" | "downvote";
 }
 
 const VoteSchema = new Schema<IVote>(
   {
     author: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    id: { type: Schema.Types.ObjectId, refPath: "type", required: true },
-    type: { type: String, enum: ["Question", "Answer"], required: true },
+    actionId: { type: Schema.Types.ObjectId, refPath: "type", required: true },
+    actionType: { type: String, enum: ["Question", "Answer"], required: true },
     voteType: { type: String, enum: ["upvote", "downvote"], required: true },
   },
   { timestamps: true }
