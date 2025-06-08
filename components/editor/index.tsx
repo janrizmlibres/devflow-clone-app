@@ -9,8 +9,6 @@ import {
   toolbarPlugin,
   UndoRedo,
   BoldItalicUnderlineToggles,
-  type MDXEditorMethods,
-  type MDXEditorProps,
   ListsToggle,
   ConditionalContents,
   ChangeCodeMirrorLanguage,
@@ -29,6 +27,8 @@ import {
   diffSourcePlugin,
   DiffSourceToggleWrapper,
   MDXEditor,
+  type MDXEditorMethods,
+  type MDXEditorProps,
 } from "@mdxeditor/editor";
 import { basicDark } from "cm6-theme-basic-dark";
 import { useTheme } from "next-themes";
@@ -63,9 +63,9 @@ const Editor = ({ editorRef, ...props }: Props) => {
           codeBlockLanguages: {
             txt: "Text",
             html: "HTML",
-            scss: "SCSS",
-            jsx: "JavaScript (React)",
-            tsx: "TypeScript (React)",
+            scss: "CSS | SCSS",
+            jsx: "JavaScript | JSX",
+            tsx: "TypeScript | TSX",
             sql: "SQL",
             json: "JSON",
           },
@@ -113,7 +113,7 @@ const Editor = ({ editorRef, ...props }: Props) => {
       ]}
       {...props}
       ref={editorRef}
-      className="dark-editor markdown-editor w-full border light-border-2 background-light800_dark200"
+      className="dark-editor markdown-editor grid w-full border light-border-2 background-light800_dark200"
     />
   );
 };

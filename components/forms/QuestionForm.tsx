@@ -2,11 +2,13 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import dynamic from "next/dynamic";
-import { useForm } from "react-hook-form";
+import { KeyboardEvent } from "react";
+import { ControllerRenderProps, useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { AskQuestionSchema } from "@/lib/validations";
 
+import TagCard from "../cards/TagCard";
 import { Button } from "../ui/button";
 import {
   Form,
@@ -33,7 +35,59 @@ const QuestionForm = () => {
     },
   });
 
-  const handleCreateQuestion = () => {};
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleCreateQuestion = (data: z.infer<typeof AskQuestionSchema>) => {};
+
+  const handleInputKeyDown = (
+    e: KeyboardEvent<HTMLInputElement>,
+    field: ControllerRenderProps<
+      { title: string; content: string; tags: string[] },
+      "tags"
+    >
+  ) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const tagInput = e.currentTarget.value.trim();
+
+      if (!tagInput) return;
+
+      if (field.value.length > 15) {
+        form.setError("tags", {
+          type: "manual",
+          message: "Tag must not exceed 15 characters.",
+        });
+        return;
+      }
+
+      if (field.value.includes(tagInput)) {
+        form.setError("tags", {
+          type: "manual",
+          message: "Tag already exists.",
+        });
+        return;
+      }
+
+      form.setValue("tags", [...field.value, tagInput], {
+        shouldValidate: true,
+      });
+      form.clearErrors("tags");
+      e.currentTarget.value = "";
+    }
+  };
+
+  const handleTagRemove = (
+    tag: string,
+    field: ControllerRenderProps<
+      { title: string; content: string; tags: string[] },
+      "tags"
+    >
+  ) => {
+    const updatedTags = field.value.filter((t) => t !== tag);
+    form.setValue("tags", updatedTags, {
+      shouldValidate: true,
+    });
+    form.clearErrors("tags");
+  };
 
   return (
     <Form {...form}>
@@ -94,17 +148,32 @@ const QuestionForm = () => {
               <FormControl>
                 <div>
                   <Input
-                    {...field}
                     className="min-h-[56px] border light-border-2 background-light700_dark300 paragraph-regular text-dark300_light700 no-focus"
                     placeholder="Add tags..."
+                    onKeyDown={(e) => handleInputKeyDown(e, field)}
                   />
-                  Tags
+                  {field.value.length > 0 && (
+                    <div className="mt-2.5 flex-start flex-wrap gap-2.5">
+                      {field.value.map((tag) => (
+                        <TagCard
+                          key={tag}
+                          _id={tag}
+                          name={tag}
+                          compact
+                          remove
+                          isButton
+                          handleRemove={() => handleTagRemove(tag, field)}
+                        />
+                      ))}
+                    </div>
+                  )}
                 </div>
               </FormControl>
               <FormDescription className="mt-2.5 body-regular text-light-500">
                 Add up to 3 tags to describe what your question is about. You
                 need to press enter to add a tag.
               </FormDescription>
+              {form.formState.errors.tags?.[0]?.message}
               <FormMessage />
             </FormItem>
           )}
