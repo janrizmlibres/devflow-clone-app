@@ -8,17 +8,17 @@ export interface IAnswer {
   downvotes: number;
 }
 
-const AnswerSchema = new Schema(
+const AnswerSchema = new Schema<IAnswer>(
   {
     author: { type: Schema.Types.ObjectId, ref: "User", required: true },
     question: { type: Schema.Types.ObjectId, ref: "Question", required: true },
     content: { type: String, required: true },
-    upvotes: { type: Number, default: 0, required: true },
-    downvotes: { type: Number, default: 0, required: true },
+    upvotes: { type: Number, default: 0 },
+    downvotes: { type: Number, default: 0 },
   },
   { timestamps: true }
 );
 
-const Answer = models.Answer || model("Answer", AnswerSchema);
+const Answer = models.Answer || model<IAnswer>("Answer", AnswerSchema);
 
 export default Answer;
