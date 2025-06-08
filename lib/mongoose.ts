@@ -16,34 +16,37 @@ declare global {
   var mongoose: MongooseCache;
 }
 
-let cache = global.mongoose;
+let cached = global.mongoose;
 
-if (!cache) {
-  cache = global.mongoose = { conn: null, promise: null };
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
 }
 
 const dbConnect = async (): Promise<Mongoose> => {
-  if (cache.conn) {
-    return cache.conn;
+  if (cached.conn) {
+    return cached.conn;
   }
 
-  if (!cache.promise) {
-    cache.promise = mongoose
+  if (!cached.promise) {
+    cached.promise = mongoose
       .connect(MONGODB_URI, {
         dbName: "devflow",
       })
       .then((result) => {
         console.log("Connected to MongoDB");
         return result;
-      })
-      .catch((error) => {
-        console.error("Error connecting to MongoDB", error);
-        throw error;
       });
   }
 
-  cache.conn = await cache.promise;
-  return cache.conn;
+  try {
+    cached.conn = await cached.promise;
+  } catch (error) {
+    cached.promise = null;
+    console.error("Error connecting to MongoDB", error);
+    throw error;
+  }
+
+  return cached.conn;
 };
 
 export default dbConnect;
