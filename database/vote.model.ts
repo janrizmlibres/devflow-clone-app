@@ -3,7 +3,7 @@ import { model, models, Schema, Types } from "mongoose";
 export interface IVote {
   author: Types.ObjectId;
   actionId: Types.ObjectId;
-  actionType: "question" | "answer";
+  actionType: "Question" | "Answer";
   voteType: "upvote" | "downvote";
 }
 

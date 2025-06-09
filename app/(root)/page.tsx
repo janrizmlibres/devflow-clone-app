@@ -67,7 +67,7 @@ const test = async () => {
   try {
     throw new ValidationError({
       title: ["Required"],
-      tags: ["JavaScript is not a valid tag"],
+      tags: ["JavaScript is not a valid tag", "React is not a valid tag"],
     });
   } catch (error) {
     return handleError(error);
