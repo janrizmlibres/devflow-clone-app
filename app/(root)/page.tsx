@@ -9,7 +9,6 @@ import ROUTES from "@/constants/routes";
 import handleError from "@/lib/handlers/error";
 import { ValidationError } from "@/lib/http-errors";
 import { loadSearchParams } from "@/lib/loaders";
-import dbConnect from "@/lib/mongoose";
 
 const questions = [
   {
