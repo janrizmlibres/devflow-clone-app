@@ -6,8 +6,7 @@ import HomeFilter from "@/components/filters/HomeFilter";
 import LocalSearch from "@/components/search/LocalSearch";
 import { Button } from "@/components/ui/button";
 import ROUTES from "@/constants/routes";
-import handleError from "@/lib/handlers/error";
-import { ValidationError } from "@/lib/http-errors";
+import { api } from "@/lib/api";
 import { loadSearchParams } from "@/lib/loaders";
 
 const questions = [
@@ -64,22 +63,15 @@ const questions = [
 ];
 
 const test = async () => {
-  try {
-    throw new ValidationError({
-      title: ["Required"],
-      tags: ["JavaScript is not a valid tag", "React is not a valid tag"],
-    });
-  } catch (error) {
-    return handleError(error);
-  }
+  return await api.users.getAll();
 };
 interface PageProps {
   searchParams: Promise<SearchParams>;
 }
 
 const Home = async ({ searchParams }: PageProps) => {
-  const result = await test();
-  console.log(result);
+  const users = await test();
+  console.log(users);
 
   const { query, filter } = await loadSearchParams(searchParams);
 
