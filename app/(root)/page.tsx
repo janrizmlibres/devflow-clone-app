@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { SearchParams } from "nuqs/server";
 
+import { auth } from "@/auth";
 import QuestionCard from "@/components/cards/QuestionCard";
 import HomeFilter from "@/components/filters/HomeFilter";
 import LocalSearch from "@/components/search/LocalSearch";
 import { Button } from "@/components/ui/button";
 import ROUTES from "@/constants/routes";
-import { api } from "@/lib/api";
 import { loadSearchParams } from "@/lib/loaders";
 
 const questions = [
@@ -62,16 +62,13 @@ const questions = [
   },
 ];
 
-const test = async () => {
-  return await api.users.getAll();
-};
 interface PageProps {
   searchParams: Promise<SearchParams>;
 }
 
 const Home = async ({ searchParams }: PageProps) => {
-  const users = await test();
-  console.log(users);
+  const session = await auth();
+  console.log("Session: ", session);
 
   const { query, filter } = await loadSearchParams(searchParams);
 

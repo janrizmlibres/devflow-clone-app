@@ -5,7 +5,7 @@ export interface IAccount {
   name: string;
   image?: string;
   password?: string;
-  provider: "GitHub" | "Google" | "Email";
+  provider: "github" | "google";
   providerAccountId: string;
 }
 
@@ -17,7 +17,7 @@ const AccountSchema = new Schema<IAccount>(
     password: { type: String },
     provider: {
       type: String,
-      enum: ["GitHub", "Google", "Email"],
+      enum: ["github", "google"],
       required: true,
     },
     providerAccountId: { type: String, required: true },
