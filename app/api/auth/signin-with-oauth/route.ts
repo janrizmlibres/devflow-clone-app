@@ -10,9 +10,10 @@ import dbConnect from "@/lib/mongoose";
 import { SignInWithOAuthSchema } from "@/lib/validations";
 import { APIErrorResponse } from "@/types/global";
 
+// When signing in with OAuth, handles creation of user when it doesn't exist, or updating the user
+// if it does. Also handles creation of the account if it doesn't exist.
+// Since user and account are linked, this is done in a single transaction to ensure data integrity.
 export async function POST(request: Request) {
-  // provider - from the account parameter in signIn callback ("github" or "google")
-  // providerAccountId - also from account
   // user - the userInfo object manually created in NextAuth signIn callback
   const { provider, providerAccountId, user } = await request.json();
 
@@ -32,7 +33,7 @@ export async function POST(request: Request) {
       throw new ValidationError(validatedData.error.flatten().fieldErrors);
     }
 
-    const { name, username, email, image } = user; // the userInfo object
+    const { name, username, email, image } = user;
 
     const slugifiedUsername = slugify(username, {
       lower: true,
@@ -66,6 +67,7 @@ export async function POST(request: Request) {
       }
     }
 
+    // Check existing account.
     const existingAccount = await Account.findOne({
       userId: existingUser._id,
       provider,
@@ -73,6 +75,7 @@ export async function POST(request: Request) {
     }).session(session);
 
     if (!existingAccount) {
+      // If no existing account, create a new account
       await Account.create(
         [
           {

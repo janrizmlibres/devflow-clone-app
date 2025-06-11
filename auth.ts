@@ -16,10 +16,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return session;
     },
     // https://authjs.dev/reference/nextjs#jwt
-    // account - only available when trigger is "signIn" or "signUp"
+    // account - only available on first sign-in - includes provider info.
     async jwt({ token, account }) {
+      // Checking if account exists is how we know if this is the first sign-in (either the very first time or since logging out)
+      // If account is null, this is an update (i.e. session access) and we return the token as is.
       if (account) {
-        // When a user signs in/up, check the backend for an existing account using:
+        // Check the backend for an existing account using:
         // - email (if using credentials)
         // - providerAccountId (GitHub/Google)
         const { data: existingAccount, success } =
@@ -40,11 +42,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       // Return token as is during updates (i.e whenever a session is accessed in the client)
       return token;
     },
-    // user - https://authjs.dev/reference/nextjs#user-2
-    // profile - https://authjs.dev/reference/nextjs#profile
-    // account - https://authjs.dev/reference/nextjs#account
+    // user - the user object returned by the provider or your DB (https://authjs.dev/reference/nextjs#user-2)
+    // profile - raw profile data from the OAuth provider (https://authjs.dev/reference/nextjs#profile)
+    // account - info about the provider used (GitHub, Google, etc.) (https://authjs.dev/reference/nextjs#account)
     async signIn({ user, profile, account }) {
       // For credentials-based login (if supported later), always return true
+      // https://authjs.dev/reference/core/providers#providertype
       if (account?.type === "credentials") return true;
       if (!account || !user) return false;
 
