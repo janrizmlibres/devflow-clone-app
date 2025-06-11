@@ -1,8 +1,9 @@
-import mongoose from "mongoose";
+import mongoose, { HydratedDocument } from "mongoose";
+import { NextResponse } from "next/server";
 import slugify from "slugify";
 
 import Account from "@/database/account.model";
-import User from "@/database/user.model";
+import User, { IUser } from "@/database/user.model";
 import handleError from "@/lib/handlers/error";
 import { ValidationError } from "@/lib/http-errors";
 import dbConnect from "@/lib/mongoose";
@@ -10,6 +11,9 @@ import { SignInWithOAuthSchema } from "@/lib/validations";
 import { APIErrorResponse } from "@/types/global";
 
 export async function POST(request: Request) {
+  // provider - from the account parameter in signIn callback ("github" or "google")
+  // providerAccountId - also from account
+  // user - the userInfo object manually created in NextAuth signIn callback
   const { provider, providerAccountId, user } = await request.json();
 
   await dbConnect();
@@ -28,26 +32,32 @@ export async function POST(request: Request) {
       throw new ValidationError(validatedData.error.flatten().fieldErrors);
     }
 
-    const { name, username, email, image } = user;
+    const { name, username, email, image } = user; // the userInfo object
 
     const slugifiedUsername = slugify(username, {
       lower: true,
       strict: true,
     });
 
-    let existingUser = await User.findOne({ email }).session(session);
+    // Check existing user by email
+    let existingUser: HydratedDocument<IUser> = await User.findOne({
+      email,
+    }).session(session);
 
     if (!existingUser) {
+      // If no existing user, create a new user
       [existingUser] = await User.create(
         [{ name, username: slugifiedUsername, email, image }],
         { session }
       );
     } else {
+      // else update the existing user if necessary
       const updatedData: { name?: string; image?: string } = {};
 
       if (existingUser.name !== name) updatedData.name = name;
       if (existingUser.image !== image) updatedData.image = image;
 
+      // A length of 0 means no updates are needed
       if (Object.keys(updatedData).length > 0) {
         await User.updateOne(
           { _id: existingUser._id },
@@ -78,6 +88,8 @@ export async function POST(request: Request) {
     }
 
     await session.commitTransaction();
+
+    return NextResponse.json({ success: true });
   } catch (error: unknown) {
     await session.abortTransaction();
     return handleError(error, "api") as APIErrorResponse;

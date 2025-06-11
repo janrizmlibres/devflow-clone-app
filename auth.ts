@@ -10,12 +10,18 @@ import { ActionResponse } from "./types/global";
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [GitHub, Google],
   callbacks: {
+    // Adds the user.id field to the session using the token.sub value (which is the user's database ID)
     async session({ session, token }) {
-      session.user.id = token.sub as string;
+      session.user.id = token.sub!;
       return session;
     },
+    // https://authjs.dev/reference/nextjs#jwt
+    // account - only available when trigger is "signIn" or "signUp"
     async jwt({ token, account }) {
       if (account) {
+        // When a user signs in/up, check the backend for an existing account using:
+        // - email (if using credentials)
+        // - providerAccountId (GitHub/Google)
         const { data: existingAccount, success } =
           (await api.accounts.getByProvider(
             account.type === "credentials"
@@ -27,31 +33,44 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         const userId = existingAccount.userId;
 
+        // If found, set token.sub = userId (critical for session linking later)
         if (userId) token.sub = userId.toString();
       }
 
+      // Return token as is during updates (i.e whenever a session is accessed in the client)
       return token;
     },
+    // user - https://authjs.dev/reference/nextjs#user-2
+    // profile - https://authjs.dev/reference/nextjs#profile
+    // account - https://authjs.dev/reference/nextjs#account
     async signIn({ user, profile, account }) {
+      // For credentials-based login (if supported later), always return true
       if (account?.type === "credentials") return true;
       if (!account || !user) return false;
 
+      // If OAuth (GitHub or Google):
+      // 1. Construct a userInfo object
+      // 2. Send it to the backend (api.auth.oAuthSignIn) to create or update the account
       const userInfo = {
         name: user.name!,
         email: user.email!,
         image: user.image!,
+        // Username is auto-generated when signing in with OAuth.
+        // This will be sluggified later in the backend.
         username:
           account.provider === "github"
             ? (profile?.login as string)
             : (user.name?.toLowerCase() as string),
       };
 
+      // Pass the user, provider, and providerAccountId to the backend API when signing in with OAuth
       const { success } = (await api.auth.oAuthSignIn({
         user: userInfo,
         provider: account.provider as "github" | "google",
         providerAccountId: account.providerAccountId,
       })) as ActionResponse;
 
+      // If unsuccessful, sign-in fails.
       if (!success) return false;
 
       return true;
