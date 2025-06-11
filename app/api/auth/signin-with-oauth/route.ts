@@ -10,6 +10,15 @@ import dbConnect from "@/lib/mongoose";
 import { SignInWithOAuthSchema } from "@/lib/validations";
 import { APIErrorResponse } from "@/types/global";
 
+// Process:
+// - If a user uses GitHub oAuth, we'll create an Account containing GitHub oAuth info and then create
+// a User with a GitHub name, username, and image.
+// - If a user uses Google oAuth, we'll create an Account containing Google oAuth info and then create
+// a User with a Google name, username, and image.
+// - If a user uses GitHub oAuth first or Google oAuth first and then the other one later, we'll create
+// that oAuth account and update user info to show the latest oAuth name and image. The username will
+// stay as is once it has been created. It won't fluctuate.
+
 // When signing in with OAuth, handles creation of user when it doesn't exist, or updating the user
 // if it does. Also handles creation of the account if it doesn't exist.
 // Since user and account are linked, this is done in a single transaction to ensure data integrity.
