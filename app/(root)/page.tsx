@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { SearchParams } from "nuqs/server";
 
-import { auth } from "@/auth";
 import QuestionCard from "@/components/cards/QuestionCard";
 import HomeFilter from "@/components/filters/HomeFilter";
 import LocalSearch from "@/components/search/LocalSearch";
@@ -67,9 +66,6 @@ interface PageProps {
 }
 
 const Home = async ({ searchParams }: PageProps) => {
-  const session = await auth();
-  console.log("Session: ", session);
-
   const { query, filter } = await loadSearchParams(searchParams);
 
   const filteredQuestions = questions.filter((question) => {
