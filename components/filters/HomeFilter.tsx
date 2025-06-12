@@ -21,7 +21,7 @@ const HomeFilter = () => {
   const [filter, setFilter] = useQueryState("filter", { shallow: false });
 
   const handleTypeClick = (value: string) => {
-    setFilter(filter !== value ? value : null);
+    setFilter((prev) => (prev !== value ? value : null));
   };
 
   return (

@@ -4,9 +4,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import dynamic from "next/dynamic";
 import { KeyboardEvent } from "react";
 import { ControllerRenderProps, useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
+import { createQuestion } from "@/lib/actions/question.action";
 import { AskQuestionSchema } from "@/lib/validations";
+import { ActionResponse } from "@/types/global";
 
 import TagCard from "../cards/TagCard";
 import { Button } from "../ui/button";
@@ -35,8 +38,24 @@ const QuestionForm = () => {
     },
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleCreateQuestion = (data: z.infer<typeof AskQuestionSchema>) => {};
+  const handleCreateQuestion = async (
+    data: z.infer<typeof AskQuestionSchema>
+  ) => {
+    const result = (await createQuestion(data)) as ActionResponse;
+
+    if (result?.success) {
+      form.reset();
+      form.clearErrors();
+
+      toast.success("Success", {
+        description: "Question successfully submitted",
+      });
+    } else {
+      toast.error(`Error ${result?.status}`, {
+        description: result?.error?.message,
+      });
+    }
+  };
 
   const handleInputKeyDown = (
     e: KeyboardEvent<HTMLInputElement>,
@@ -70,6 +89,7 @@ const QuestionForm = () => {
       form.setValue("tags", [...field.value, tagInput], {
         shouldValidate: true,
       });
+
       form.clearErrors("tags");
       e.currentTarget.value = "";
     }
