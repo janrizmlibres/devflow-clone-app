@@ -1,15 +1,17 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { ReloadIcon } from "@radix-ui/react-icons";
 import dynamic from "next/dynamic";
-import { KeyboardEvent } from "react";
+import { useRouter } from "next/navigation";
+import { KeyboardEvent, useTransition } from "react";
 import { ControllerRenderProps, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
+import ROUTES from "@/constants/routes";
 import { createQuestion } from "@/lib/actions/question.action";
 import { AskQuestionSchema } from "@/lib/validations";
-import { ActionResponse } from "@/types/global";
 
 import TagCard from "../cards/TagCard";
 import { Button } from "../ui/button";
@@ -29,6 +31,9 @@ const Editor = dynamic(() => import("@/components/editor"), {
 });
 
 const QuestionForm = () => {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+
   const form = useForm<z.infer<typeof AskQuestionSchema>>({
     resolver: zodResolver(AskQuestionSchema),
     defaultValues: {
@@ -41,20 +46,20 @@ const QuestionForm = () => {
   const handleCreateQuestion = async (
     data: z.infer<typeof AskQuestionSchema>
   ) => {
-    const result = (await createQuestion(data)) as ActionResponse;
+    startTransition(async () => {
+      const result = await createQuestion(data);
+      if (result.success) {
+        toast.success("Success", {
+          description: "Question created successfully",
+        });
 
-    if (result?.success) {
-      form.reset();
-      form.clearErrors();
-
-      toast.success("Success", {
-        description: "Question successfully submitted",
-      });
-    } else {
-      toast.error(`Error ${result?.status}`, {
-        description: result?.error?.message,
-      });
-    }
+        router.push(ROUTES.QUESTION(result.data!._id.toString()));
+      } else {
+        toast.error(`Error ${result.status}`, {
+          description: result.error?.message || "Something went wrong",
+        });
+      }
+    });
   };
 
   const handleInputKeyDown = (
@@ -202,9 +207,17 @@ const QuestionForm = () => {
         <div className="mt-16 flex justify-end">
           <Button
             type="submit"
+            disabled={isPending}
             className="w-fit !text-light-900 primary-gradient"
           >
-            Ask A Question
+            {isPending ? (
+              <>
+                <ReloadIcon className="mr-2 size-4 animate-spin" />
+                <span>Submitting</span>
+              </>
+            ) : (
+              <>Ask A Question</>
+            )}
           </Button>
         </div>
       </form>

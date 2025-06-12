@@ -13,7 +13,7 @@ import { AskQuestionSchema } from "../validations";
 
 export async function createQuestion(
   params: CreateQuestionParams
-): Promise<ActionResponse> {
+): Promise<ActionResponse<HydratedDocument<IQuestion>>> {
   const validationResult = await action({
     params,
     schema: AskQuestionSchema,
