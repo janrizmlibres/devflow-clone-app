@@ -2,7 +2,6 @@ import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
 
 import ROUTES from "@/constants/routes";
-import { Question, Tag } from "@/types/global";
 
 import TagCard from "./TagCard";
 import Metric from "../Metric";

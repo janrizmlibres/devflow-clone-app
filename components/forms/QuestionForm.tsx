@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 import ROUTES from "@/constants/routes";
-import { createQuestion } from "@/lib/actions/question.action";
+import { createQuestion, editQuestion } from "@/lib/actions/question.action";
 import { AskQuestionSchema } from "@/lib/validations";
 
 import TagCard from "../cards/TagCard";
@@ -30,16 +30,21 @@ const Editor = dynamic(() => import("@/components/editor"), {
   ssr: false,
 });
 
-const QuestionForm = () => {
+interface Props {
+  question?: Question;
+  isEdit?: boolean;
+}
+
+const QuestionForm = ({ question, isEdit = false }: Props) => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<z.infer<typeof AskQuestionSchema>>({
     resolver: zodResolver(AskQuestionSchema),
     defaultValues: {
-      title: "",
-      content: "",
-      tags: [],
+      title: question?.title || "",
+      content: question?.content || "",
+      tags: question?.tags.map((tag) => tag.name) || [],
     },
   });
 
@@ -47,10 +52,17 @@ const QuestionForm = () => {
     data: z.infer<typeof AskQuestionSchema>
   ) => {
     startTransition(async () => {
-      const result = await createQuestion(data);
+      const result =
+        isEdit && question
+          ? await editQuestion({
+              questionId: question._id,
+              ...data,
+            })
+          : await createQuestion(data);
+
       if (result.success) {
         toast.success("Success", {
-          description: "Question created successfully",
+          description: `Question ${!isEdit ? "created" : "updated"} successfully`,
         });
 
         router.push(ROUTES.QUESTION(result.data!._id.toString()));
@@ -216,7 +228,7 @@ const QuestionForm = () => {
                 <span>Submitting</span>
               </>
             ) : (
-              <>Ask A Question</>
+              <>{!isEdit ? "Ask A Question" : "Edit"}</>
             )}
           </Button>
         </div>

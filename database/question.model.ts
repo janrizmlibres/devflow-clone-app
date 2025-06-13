@@ -1,9 +1,11 @@
-import { model, models, Schema, Types } from "mongoose";
+import { HydratedDocument, model, models, Schema, Types } from "mongoose";
+
+import { ITag } from "./tag.model";
 
 export interface IQuestion {
   title: string;
   content: string;
-  tags: Types.ObjectId[];
+  tags: (Types.ObjectId | HydratedDocument<ITag>)[];
   views: number;
   answers: number;
   upvotes: number;
