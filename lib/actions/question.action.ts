@@ -74,7 +74,10 @@ export async function createQuestion(
 
     await session.commitTransaction();
 
-    return { success: true, data: JSON.parse(JSON.stringify(question)) };
+    return {
+      success: true,
+      data: JSON.parse(JSON.stringify(question.toObject())),
+    };
   } catch (error) {
     await session.abortTransaction();
     return handleError(error) as ErrorResponse;
@@ -178,7 +181,10 @@ export async function editQuestion(
     await question.save({ session });
     await session.commitTransaction();
 
-    return { success: true, data: JSON.parse(JSON.stringify(question)) };
+    return {
+      success: true,
+      data: JSON.parse(JSON.stringify(question.toObject())),
+    };
   } catch (error) {
     await session.abortTransaction();
     return handleError(error) as ErrorResponse;
@@ -209,7 +215,10 @@ export async function getQuestion(
       throw new NotFoundError("Question not found.");
     }
 
-    return { success: true, data: JSON.parse(JSON.stringify(question)) };
+    return {
+      success: true,
+      data: JSON.parse(JSON.stringify(question.toObject())),
+    };
   } catch (error) {
     return handleError(error) as ErrorResponse;
   }
