@@ -1,6 +1,7 @@
 import mongoose, { Mongoose } from "mongoose";
 
 import logger from "./logger";
+import "@/database"; // Imports the index.ts in the database directory to ensure models are registered
 
 const MONGODB_URI = process.env.MONGODB_URI;
 

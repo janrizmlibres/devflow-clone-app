@@ -10,7 +10,7 @@ interface Props {
   question: Question;
 }
 
-const QuestionCard = ({
+const QuestionCard = async ({
   question: { _id, title, tags, author, createdAt, upvotes, answers, views },
 }: Props) => {
   const formattedDate = formatDistanceToNow(createdAt);

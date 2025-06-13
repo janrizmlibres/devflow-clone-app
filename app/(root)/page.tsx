@@ -6,79 +6,25 @@ import HomeFilter from "@/components/filters/HomeFilter";
 import LocalSearch from "@/components/search/LocalSearch";
 import { Button } from "@/components/ui/button";
 import ROUTES from "@/constants/routes";
+import { getQuestions } from "@/lib/actions/question.action";
 import { loadSearchParams } from "@/lib/loaders";
-
-const questions = [
-  {
-    _id: "1",
-    title: "How to learn React?",
-    description: "I am new to React and need some guidance on how to start.",
-    tags: [
-      {
-        _id: "1",
-        name: "React",
-      },
-      {
-        _id: "2",
-        name: "JavaScript",
-      },
-    ],
-    author: {
-      _id: "1",
-      name: "John Doe",
-      image:
-        "https://static.vecteezy.com/system/resources/previews/002/002/403/non_2x/man-with-beard-avatar-character-isolated-icon-free-vector.jpg",
-    },
-    upvotes: 10,
-    answers: 5,
-    views: 100,
-    createdAt: new Date(),
-  },
-  {
-    _id: "2",
-    title: "What is the best way to learn Next.js?",
-    description: "Looking for resources and tips to learn Next.js effectively.",
-    tags: [
-      {
-        _id: "3",
-        name: "NextJS",
-      },
-      {
-        _id: "2",
-        name: "JavaScript",
-      },
-    ],
-    author: {
-      _id: "2",
-      name: "Jane Smith",
-      image:
-        "https://static.vecteezy.com/system/resources/previews/002/002/403/non_2x/man-with-beard-avatar-character-isolated-icon-free-vector.jpg",
-    },
-    upvotes: 20,
-    answers: 10,
-    views: 200,
-    createdAt: new Date(),
-  },
-];
 
 interface PageProps {
   searchParams: Promise<SearchParams>;
 }
 
 const Home = async ({ searchParams }: PageProps) => {
-  const { query, filter } = await loadSearchParams(searchParams);
+  const { page, pageSize, query, filter } =
+    await loadSearchParams(searchParams);
 
-  const filteredQuestions = questions.filter((question) => {
-    const matchesQuery = question.title
-      .toLowerCase()
-      .includes(query.toLowerCase());
-    const matchesFilter = filter
-      ? question.tags.some(
-          (tag) => tag.name.toLowerCase() === filter.toLowerCase()
-        )
-      : true;
-    return matchesQuery && matchesFilter;
+  const { success, data, error } = await getQuestions({
+    page,
+    pageSize,
+    query,
+    filter,
   });
+
+  const { questions } = data || {};
 
   return (
     <>
@@ -101,11 +47,25 @@ const Home = async ({ searchParams }: PageProps) => {
         />
       </section>
       <HomeFilter />
-      <div className="mt-10 flex w-full flex-col gap-6">
-        {filteredQuestions.map((question) => (
-          <QuestionCard key={question._id} question={question} />
-        ))}
-      </div>
+      {success ? (
+        <div className="mt-10 flex w-full flex-col gap-6">
+          {questions && questions.length > 0 ? (
+            questions.map((question) => (
+              <QuestionCard key={question._id} question={question} />
+            ))
+          ) : (
+            <div className="mt-10 flex-center w-full">
+              <p className="text-dark400_light700">No questions found</p>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="mt-10 flex-center w-full">
+          <p className="text-dark400_light700">
+            {error?.message || "Failed to fetch questions"}
+          </p>
+        </div>
+      )}
     </>
   );
 };

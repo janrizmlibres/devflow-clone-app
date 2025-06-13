@@ -1,8 +1,8 @@
 "use server";
 
-import mongoose, { HydratedDocument, Types } from "mongoose";
+import mongoose, { FilterQuery, HydratedDocument, Types } from "mongoose";
 
-import Question, { IQuestion } from "@/database/question.model";
+import Question, { IQuestion, IQuestionDoc } from "@/database/question.model";
 import TagQuestion from "@/database/tag-question.model";
 import Tag, { ITag } from "@/database/tag.model";
 
@@ -13,11 +13,12 @@ import {
   AskQuestionSchema,
   EditQuestionSchema,
   GetQuestionSchema,
+  PaginatedSearchParamsSchema,
 } from "../validations";
 
 export async function createQuestion(
   params: CreateQuestionParams
-): Promise<ActionResponse<Question>> {
+): Promise<ActionResponse<HydratedDocument<IQuestion>>> {
   const validationResult = await action({
     params,
     schema: AskQuestionSchema,
@@ -50,7 +51,7 @@ export async function createQuestion(
     for (const tag of tags) {
       const existingTag = await Tag.findOneAndUpdate(
         {
-          name: { $regex: new RegExp(`^${tag}$`, "i") },
+          name: { $regex: `^${tag}$`, $options: "i" },
         },
         { $setOnInsert: { name: tag }, $inc: { questions: 1 } },
         { upsert: true, new: true, session }
@@ -88,7 +89,7 @@ export async function createQuestion(
 
 export async function editQuestion(
   params: EditQuestionParams
-): Promise<ActionResponse<Question>> {
+): Promise<ActionResponse<IQuestionDoc>> {
   const validationResult = await action({
     params,
     schema: EditQuestionSchema,
@@ -106,7 +107,7 @@ export async function editQuestion(
   session.startTransaction();
 
   try {
-    const question: HydratedDocument<IQuestion> =
+    const question: IQuestionDoc =
       await Question.findById(questionId).populate("tags");
 
     if (!question) {
@@ -142,7 +143,7 @@ export async function editQuestion(
     for (const tag of tagsToAdd) {
       const existingTag: HydratedDocument<ITag> = await Tag.findOneAndUpdate(
         {
-          name: { $regex: new RegExp(`^${tag}$`, "i") },
+          name: { $regex: `^${tag}$`, $options: "i" },
         },
         { $setOnInsert: { name: tag }, $inc: { questions: 1 } },
         { upsert: true, new: true, session }
@@ -156,10 +157,7 @@ export async function editQuestion(
       question.tags.push(existingTag._id);
     }
 
-    await Tag.deleteMany(
-      { _id: { $in: tagIdsToRemove }, questions: 1 },
-      { session }
-    );
+    // No delete operation for tags (soft delete?)
 
     await Tag.updateMany(
       { _id: { $in: tagIdsToRemove } },
@@ -219,6 +217,80 @@ export async function getQuestion(
       success: true,
       data: JSON.parse(JSON.stringify(question.toObject())),
     };
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
+  }
+}
+
+export async function getQuestions(
+  params: PaginatedSearchParams
+): Promise<ActionResponse<{ questions: Question[]; isNext: boolean }>> {
+  const validationResult = await action({
+    params,
+    schema: PaginatedSearchParamsSchema,
+  });
+
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+
+  const { page = 1, pageSize = 10, query, filter } = params;
+  const skip = (page - 1) * pageSize;
+  const limit = pageSize;
+
+  const filterQuery: FilterQuery<typeof Question> = {};
+
+  // Skip recommended filter for now
+  if (filter === "recommended") {
+    return { success: true, data: { questions: [], isNext: false } };
+  }
+
+  if (query) {
+    filterQuery.$or = [
+      { title: { $regex: query, $options: "i" } },
+      { content: { $regex: query, $options: "i" } },
+    ];
+  }
+
+  let sortCriteria = {};
+
+  switch (filter) {
+    case "newest":
+      sortCriteria = { createdAt: -1 };
+      break;
+    case "unanswered":
+      filterQuery.answers = 0;
+      sortCriteria = { createdAt: -1 };
+      break;
+    case "popular":
+      sortCriteria = { upvotes: -1 };
+      break;
+    default:
+      sortCriteria = { createdAt: -1 };
+  }
+
+  try {
+    const totalQuestions = await Question.countDocuments(filterQuery);
+
+    const questions = await Question.find(filterQuery)
+      .populate("tags", "name")
+      .populate("author", "name image")
+      .lean()
+      // lean means it will convert this MongoDB document into a plain JavaScript object that
+      // makes it easier to work with
+      .sort(sortCriteria)
+      .skip(skip)
+      .limit(limit);
+
+    const isNext = totalQuestions > skip + questions.length;
+
+    return {
+      success: true,
+      data: { questions: JSON.parse(JSON.stringify(questions)), isNext },
+    };
+    // We're using JSON.parse(JSON.stringify()) to ensure compatibility with Next.js server actions.
+    // Because when you try to pass large paylaods through server actions, sometimes it doesn't pass
+    // them properly and you get an error.
   } catch (error) {
     return handleError(error) as ErrorResponse;
   }

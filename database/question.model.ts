@@ -5,13 +5,19 @@ import { ITag } from "./tag.model";
 export interface IQuestion {
   title: string;
   content: string;
-  tags: (Types.ObjectId | HydratedDocument<ITag>)[];
+  tags: Types.ObjectId[];
   views: number;
   answers: number;
   upvotes: number;
   downvotes: number;
   author: Types.ObjectId;
+  createdAt?: Date;
 }
+
+export type IQuestionDoc = HydratedDocument<
+  IQuestion,
+  { tags: (Types.ObjectId | HydratedDocument<ITag>)[] }
+>;
 
 const QuestionSchema = new Schema<IQuestion>(
   {
