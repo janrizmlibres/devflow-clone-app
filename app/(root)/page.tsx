@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { SearchParams } from "nuqs/server";
 
 import QuestionCard from "@/components/cards/QuestionCard";
 import DataRenderer from "@/components/DataRenderer";
@@ -10,12 +9,9 @@ import ROUTES from "@/constants/routes";
 import { EMPTY_QUESTION } from "@/constants/states";
 import { getQuestions } from "@/lib/actions/question.action";
 import { loadSearchParams } from "@/lib/loaders";
+import { RouteParams } from "@/types/module";
 
-interface PageProps {
-  searchParams: Promise<SearchParams>;
-}
-
-const Home = async ({ searchParams }: PageProps) => {
+const Home = async ({ searchParams }: RouteParams) => {
   const { page, pageSize, query, filter } =
     await loadSearchParams(searchParams);
 
@@ -42,7 +38,6 @@ const Home = async ({ searchParams }: PageProps) => {
       </section>
       <section className="mt-11">
         <LocalSearch
-          route="/"
           imgSrc="/icons/search.svg"
           placeholder="Search questions..."
           className="flex-1"
@@ -56,7 +51,7 @@ const Home = async ({ searchParams }: PageProps) => {
         data={questions}
         empty={EMPTY_QUESTION}
         render={(questions) => (
-          <div className="- mt-10 flex w-full flex-col gap-6">
+          <div className="mt-10 flex w-full flex-col gap-6">
             {questions.map((question) => (
               <QuestionCard key={question._id} question={question} />
             ))}

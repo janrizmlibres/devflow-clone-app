@@ -7,13 +7,18 @@ import { useEffect, useState } from "react";
 import { Input } from "../ui/input";
 
 interface Props {
-  route: string;
   imgSrc: string;
   placeholder: string;
+  iconPosition?: "left" | "right";
   className?: string;
 }
 
-const LocalSearch = ({ imgSrc, placeholder, className }: Props) => {
+const LocalSearch = ({
+  imgSrc,
+  placeholder,
+  iconPosition = "left",
+  className,
+}: Props) => {
   const [query, setQuery] = useQueryState("query", { defaultValue: "" });
   const [searchInput, setSearchInput] = useState(query);
 
@@ -29,13 +34,15 @@ const LocalSearch = ({ imgSrc, placeholder, className }: Props) => {
     <div
       className={`flex min-h-[56px] grow items-center gap-4 rounded-[10px] background-light800_darkgradient px-4 ${className}`}
     >
-      <Image
-        src={imgSrc}
-        width={24}
-        height={24}
-        alt="Search"
-        className="cursor-pointer"
-      />
+      {iconPosition === "left" && (
+        <Image
+          src={imgSrc}
+          width={24}
+          height={24}
+          alt="Search"
+          className="cursor-pointer"
+        />
+      )}
 
       <Input
         type="text"
@@ -44,6 +51,16 @@ const LocalSearch = ({ imgSrc, placeholder, className }: Props) => {
         onChange={(e) => setSearchInput(e.target.value)}
         className="border-none !bg-transparent paragraph-regular placeholder text-dark400_light700 shadow-none no-focus outline-none"
       />
+
+      {iconPosition === "right" && (
+        <Image
+          src={imgSrc}
+          width={15}
+          height={15}
+          alt="Search"
+          className="cursor-pointer"
+        />
+      )}
     </div>
   );
 };
