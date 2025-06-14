@@ -1,21 +1,32 @@
 import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { after } from "next/server";
 
 import TagCard from "@/components/cards/TagCard";
 import Preview from "@/components/editor/Preview";
+import AnswerForm from "@/components/forms/AnswerForm";
 import Metric from "@/components/Metric";
 import UserAvatar from "@/components/UserAvatar";
 import ROUTES from "@/constants/routes";
-import { getQuestion } from "@/lib/actions/question.action";
+import { getQuestion, incrementViews } from "@/lib/actions/question.action";
 import { formatNumber } from "@/lib/utils";
 import { RouteParams } from "@/types/module";
-
-import View from "../view";
 
 const QuestionDetails = async ({ params }: RouteParams) => {
   const { id } = await params;
   const { success, data: question } = await getQuestion({ questionId: id });
+
+  // Increment question views when user visits the page (Approach #2)
+  // const [, { success, data: question }] = await Promise.all([
+  //   incrementViews({ questionId: id }),
+  //   getQuestion({ questionId: id }),
+  // ]);
+
+  // Increment question views after the component is rendered (Approach #3)
+  after(async () => {
+    await incrementViews({ questionId: id });
+  });
 
   if (!success || !question) return redirect("/404");
 
@@ -23,7 +34,8 @@ const QuestionDetails = async ({ params }: RouteParams) => {
 
   return (
     <>
-      <View questionId={id} />
+      {/* Needed for the Approach #1 */}
+      {/* <View questionId={id} /> */}
 
       <div className="flex-start w-full flex-col">
         <div className="flex w-full flex-col-reverse justify-between">
@@ -83,6 +95,10 @@ const QuestionDetails = async ({ params }: RouteParams) => {
           <TagCard key={tag._id} {...tag} compact />
         ))}
       </div>
+
+      <section className="my-5">
+        <AnswerForm />
+      </section>
     </>
   );
 };

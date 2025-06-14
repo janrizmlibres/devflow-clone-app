@@ -1,9 +1,7 @@
 "use server";
 
 import mongoose, { FilterQuery, HydratedDocument, Types } from "mongoose";
-import { revalidatePath } from "next/cache";
 
-import ROUTES from "@/constants/routes";
 import Question, { IQuestion, IQuestionDoc } from "@/database/question.model";
 import TagQuestion from "@/database/tag-question.model";
 import Tag, { ITag } from "@/database/tag.model";
@@ -327,7 +325,8 @@ export async function incrementViews(
 
     if (!question) throw new NotFoundError("Question not found.");
 
-    revalidatePath(ROUTES.QUESTION(questionId));
+    // Needed for the Approach #1
+    // revalidatePath(ROUTES.QUESTION(questionId));
 
     return { success: true, data: { views: question.views } };
   } catch (error) {
