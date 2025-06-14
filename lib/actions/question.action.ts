@@ -157,7 +157,10 @@ export async function editQuestion(
       question.tags.push(existingTag._id);
     }
 
-    // No delete operation for tags (soft delete?)
+    await Tag.deleteMany(
+      { _id: { $in: tagIdsToRemove }, questions: 1 },
+      { session }
+    );
 
     await Tag.updateMany(
       { _id: { $in: tagIdsToRemove } },
