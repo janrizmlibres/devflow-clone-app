@@ -1,7 +1,9 @@
 "use server";
 
 import mongoose, { FilterQuery, HydratedDocument, Types } from "mongoose";
+import { revalidatePath } from "next/cache";
 
+import ROUTES from "@/constants/routes";
 import Question, { IQuestion, IQuestionDoc } from "@/database/question.model";
 import TagQuestion from "@/database/tag-question.model";
 import Tag, { ITag } from "@/database/tag.model";
@@ -13,6 +15,7 @@ import {
   AskQuestionSchema,
   EditQuestionSchema,
   GetQuestionSchema,
+  IncrementViewsSchema,
   PaginatedSearchParamsSchema,
 } from "../validations";
 
@@ -296,6 +299,37 @@ export async function getQuestions(
     // We're using JSON.parse(JSON.stringify()) to ensure compatibility with Next.js server actions.
     // Because when you try to pass large paylaods through server actions, sometimes it doesn't pass
     // them properly and you get an error.
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
+  }
+}
+
+export async function incrementViews(
+  params: IncrementViewsParams
+): Promise<ActionResponse<{ views: number }>> {
+  const validationResult = await action({
+    params,
+    schema: IncrementViewsSchema,
+  });
+
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+
+  const { questionId } = validationResult.params!;
+
+  try {
+    const question = await Question.findByIdAndUpdate(
+      questionId,
+      { $inc: { views: 1 } },
+      { new: true }
+    );
+
+    if (!question) throw new NotFoundError("Question not found.");
+
+    revalidatePath(ROUTES.QUESTION(questionId));
+
+    return { success: true, data: { views: question.views } };
   } catch (error) {
     return handleError(error) as ErrorResponse;
   }

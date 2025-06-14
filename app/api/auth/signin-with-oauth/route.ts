@@ -8,7 +8,7 @@ import handleError from "@/lib/handlers/error";
 import { ValidationError } from "@/lib/http-errors";
 import dbConnect from "@/lib/mongoose";
 import { SignInWithOAuthSchema } from "@/lib/validations";
-import { APIErrorResponse } from "@/types/global";
+import { APIErrorResponse } from "@/types/api";
 
 // Process:
 // - If a user uses GitHub oAuth, we'll create an Account containing GitHub oAuth info and then create

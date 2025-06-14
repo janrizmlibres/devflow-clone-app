@@ -11,6 +11,8 @@ import { getQuestion } from "@/lib/actions/question.action";
 import { formatNumber } from "@/lib/utils";
 import { RouteParams } from "@/types/module";
 
+import View from "../view";
+
 const QuestionDetails = async ({ params }: RouteParams) => {
   const { id } = await params;
   const { success, data: question } = await getQuestion({ questionId: id });
@@ -21,12 +23,15 @@ const QuestionDetails = async ({ params }: RouteParams) => {
 
   return (
     <>
+      <View questionId={id} />
+
       <div className="flex-start w-full flex-col">
         <div className="flex w-full flex-col-reverse justify-between">
           <div className="flex-start gap-1">
             <UserAvatar
               id={author._id}
               name={author.name}
+              imageUrl={author.image}
               className="size-[22px]"
               fallbackClassName="text-[10px]"
             />
