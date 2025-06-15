@@ -1,4 +1,4 @@
-import { model, models, Schema, Types } from "mongoose";
+import { HydratedDocument, model, models, Schema, Types } from "mongoose";
 
 export interface IVote {
   author: Types.ObjectId;
@@ -6,6 +6,8 @@ export interface IVote {
   actionType: "Question" | "Answer";
   voteType: "upvote" | "downvote";
 }
+
+export type IVoteDoc = HydratedDocument<IVote>;
 
 const VoteSchema = new Schema<IVote>(
   {
