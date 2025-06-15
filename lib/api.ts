@@ -64,4 +64,14 @@ export const api = {
         method: "DELETE",
       }),
   },
+  ai: {
+    getAnswer: (
+      question: string,
+      content: string
+    ): Promise<ActionResponse<string>> =>
+      fetchHandler<string>(`${API_BASE_URL}/ai/answers`, {
+        method: "POST",
+        body: JSON.stringify({ question, content }),
+      }),
+  },
 };
