@@ -1,10 +1,11 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { MDXEditorMethods } from "@mdxeditor/editor";
 import { ReloadIcon } from "@radix-ui/react-icons";
-import dynamic from "next/dynamic";
 import Image from "next/image";
-import { useState, useTransition } from "react";
+import { useSession } from "next-auth/react";
+import { useRef, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -18,15 +19,23 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { createAnswer } from "@/lib/actions/answer.action";
+import { api } from "@/lib/api";
 import { AnswerSchema } from "@/lib/validations";
 
-const Editor = dynamic(() => import("@/components/editor"), {
-  ssr: false,
-});
+import Editor from "../editor";
 
-const AnswerForm = ({ questionId }: { questionId: string }) => {
+interface Props {
+  questionId: string;
+  questionTitle: string;
+  questionContent: string;
+}
+
+const AnswerForm = ({ questionId, questionTitle, questionContent }: Props) => {
   const [isAnswering, startAnsweringTransition] = useTransition();
   const [isAISubmitting, setIsAISubmitting] = useState(false);
+  const session = useSession();
+
+  const editorRef = useRef<MDXEditorMethods>(null);
 
   const form = useForm<z.infer<typeof AnswerSchema>>({
     resolver: zodResolver(AnswerSchema),
@@ -47,10 +56,57 @@ const AnswerForm = ({ questionId }: { questionId: string }) => {
         toast.success("Success", {
           description: "Your answer has been posted successfully.",
         });
+
+        editorRef.current?.setMarkdown("");
       } else {
         toast.error("Error", { description: result.error?.message });
       }
     });
+  };
+
+  const generateAIAnswer = async () => {
+    if (session.status !== "authenticated") {
+      return toast("Please log in", {
+        description: "You need to be logged in to use this feature.",
+      });
+    }
+
+    setIsAISubmitting(true);
+
+    const userAnswer = editorRef.current?.getMarkdown();
+
+    try {
+      const { success, data, error } = await api.ai.getAnswer(
+        questionTitle,
+        questionContent,
+        userAnswer
+      );
+
+      if (!success) {
+        return toast.error("Error", { description: error?.message });
+      }
+
+      const formattedAnswer = data!.replace(/<br>/g, " ").toString().trim();
+
+      editorRef.current!.setMarkdown(formattedAnswer);
+      form.setValue("content", formattedAnswer, {
+        shouldValidate: true,
+        shouldTouch: true,
+      });
+
+      toast.success("Success", {
+        description: "AI-generated answer has been added",
+      });
+    } catch (error) {
+      toast.error("Error", {
+        description:
+          error instanceof Error
+            ? error.message
+            : "There was a problem with your request",
+      });
+    } finally {
+      setIsAISubmitting(false);
+    }
   };
 
   return (
@@ -62,6 +118,7 @@ const AnswerForm = ({ questionId }: { questionId: string }) => {
         <Button
           className="gap-1.5 rounded-md border light-border-2 btn px-4 py-2.5 text-primary-500 shadow-none dark:text-primary-500"
           disabled={isAISubmitting}
+          onClick={generateAIAnswer}
         >
           {isAISubmitting ? (
             <>
@@ -93,7 +150,11 @@ const AnswerForm = ({ questionId }: { questionId: string }) => {
             render={({ field }) => (
               <FormItem className="flex w-full flex-col gap-3">
                 <FormControl className="mt-3.5">
-                  <Editor markdown="" onChange={field.onChange} />
+                  <Editor
+                    markdown={field.value}
+                    onChange={field.onChange}
+                    ref={editorRef}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

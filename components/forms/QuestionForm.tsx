@@ -2,7 +2,6 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ReloadIcon } from "@radix-ui/react-icons";
-import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { KeyboardEvent, useTransition } from "react";
 import { ControllerRenderProps, useForm } from "react-hook-form";
@@ -14,6 +13,7 @@ import { createQuestion, editQuestion } from "@/lib/actions/question.action";
 import { AskQuestionSchema } from "@/lib/validations";
 
 import TagCard from "../cards/TagCard";
+import Editor from "../editor";
 import { Button } from "../ui/button";
 import {
   Form,
@@ -25,10 +25,6 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
-
-const Editor = dynamic(() => import("@/components/editor"), {
-  ssr: false,
-});
 
 interface Props {
   question?: Question;

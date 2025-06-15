@@ -2,6 +2,7 @@ import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { after } from "next/server";
+import { SessionProvider } from "next-auth/react";
 
 import AllAnswers from "@/components/answers/AllAnswers";
 import TagCard from "@/components/cards/TagCard";
@@ -119,7 +120,13 @@ const QuestionDetails = async ({ params }: RouteParams) => {
       </section>
 
       <section className="my-5">
-        <AnswerForm questionId={question._id} />
+        <SessionProvider>
+          <AnswerForm
+            questionId={question._id}
+            questionTitle={question.title}
+            questionContent={question.content}
+          />
+        </SessionProvider>
       </section>
     </>
   );
