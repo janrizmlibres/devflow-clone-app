@@ -90,8 +90,22 @@ export async function createVote(
         );
       } else {
         // If the user is changing their vote, update it
-        existingVote.voteType = voteType;
-        await existingVote.save({ session });
+        await Vote.findByIdAndUpdate(
+          existingVote._id,
+          { voteType },
+          { session }
+        );
+
+        await updateVoteCount(
+          {
+            targetId,
+            targetType,
+            voteType: existingVote.voteType,
+            change: -1,
+          },
+          session
+        );
+
         await updateVoteCount(
           { targetId, targetType, voteType, change: 1 },
           session
