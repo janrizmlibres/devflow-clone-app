@@ -41,7 +41,7 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
       >
         <ThemeProvider attribute="class" disableTransitionOnChange>
           <NuqsAdapter>{children}</NuqsAdapter>
-          <Toaster position="top-center" richColors />
+          <Toaster richColors />
         </ThemeProvider>
       </body>
     </html>
