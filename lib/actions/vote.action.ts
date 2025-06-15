@@ -1,7 +1,9 @@
 "use server";
 
 import mongoose, { ClientSession } from "mongoose";
+import { revalidatePath } from "next/cache";
 
+import ROUTES from "@/constants/routes";
 import { Answer, Question, Vote } from "@/database";
 import { IVoteDoc } from "@/database/vote.model";
 
@@ -115,6 +117,8 @@ export async function createVote(
     }
 
     await session.commitTransaction();
+
+    revalidatePath(ROUTES.QUESTION(targetId));
 
     return { success: true };
   } catch (error) {
