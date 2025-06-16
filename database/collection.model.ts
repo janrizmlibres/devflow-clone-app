@@ -1,9 +1,11 @@
-import { model, models, Schema, Types } from "mongoose";
+import { HydratedDocument, model, models, Schema, Types } from "mongoose";
 
 export interface ICollection {
   author: Types.ObjectId;
   question: Types.ObjectId;
 }
+
+export type ICollectionDoc = HydratedDocument<ICollection>;
 
 const CollectionSchema = new Schema<ICollection>(
   {

@@ -57,7 +57,7 @@ export async function getUsers(
       .skip(skip)
       .limit(limit);
 
-    const isNext = totalUsers > page + users.length;
+    const isNext = totalUsers > skip + users.length;
 
     return {
       success: true,
