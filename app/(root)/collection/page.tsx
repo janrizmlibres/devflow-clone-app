@@ -1,4 +1,6 @@
+import QuestionCard from "@/components/cards/QuestionCard";
 import DataRenderer from "@/components/DataRenderer";
+import LocalSearch from "@/components/search/LocalSearch";
 import { EMPTY_COLLECTIONS } from "@/constants/states";
 import { getSavedQuestions } from "@/lib/actions/collection.action";
 import { loadSearchParams } from "@/lib/loaders";
@@ -15,36 +17,34 @@ const Collections = async ({ searchParams }: RouteParams) => {
     filter,
   });
 
-  const { collection: collections } = data || {};
+  const { collection } = data || {};
 
   return (
-    <div>
-      <h1 className="h1-bold text-dark100_light900">All Collections</h1>
+    <>
+      <h1 className="h1-bold text-dark100_light900">Saved Questions</h1>
 
-      {/* <div className="mt-11">
+      <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
         <LocalSearch
           imgSrc="/icons/search.svg"
-          placeholder="There are some great devs here!"
+          placeholder="Search questions..."
           className="flex-1"
         />
-      </div> */}
+      </div>
 
       <DataRenderer
-        empty={EMPTY_COLLECTIONS}
         success={success}
         error={error}
-        data={collections}
-        render={(collections) => (
-          <div className="mt-12 flex flex-wrap gap-5">
-            {collections.map((collection) => (
-              <p key={collection._id.toString()}>
-                {collection.question.toString()}
-              </p>
+        data={collection}
+        empty={EMPTY_COLLECTIONS}
+        render={(collection) => (
+          <div className="mt-10 flex w-full flex-col gap-6">
+            {collection.map((item) => (
+              <QuestionCard key={item._id} question={item.question} />
             ))}
           </div>
         )}
       />
-    </div>
+    </>
   );
 };
 
