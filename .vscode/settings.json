@@ -6,5 +6,12 @@
   "editor.quickSuggestions": {
     "strings": "on"
   },
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "tailwindCSS.classAttributes": [
+    "class",
+    "className",
+    "ngClass",
+    "class:list",
+    "fallbackClassName"
+  ]
 }
