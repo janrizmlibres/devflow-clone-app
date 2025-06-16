@@ -8,5 +8,9 @@
   "arrowParens": "always",
   "plugins": ["prettier-plugin-tailwindcss"],
   "tailwindStylesheet": "./app/globals.css",
-  "tailwindAttributes": ["fallbackClassName"]
+  "tailwindAttributes": [
+    "fallbackClassName",
+    "otherClasses",
+    "containerClasses"
+  ]
 }

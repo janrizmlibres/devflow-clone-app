@@ -12,6 +12,8 @@
     "className",
     "ngClass",
     "class:list",
-    "fallbackClassName"
+    "fallbackClassName",
+    "otherClasses",
+    "containerClasses"
   ]
 }
