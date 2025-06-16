@@ -18,11 +18,13 @@ import { getAnswers } from "@/lib/actions/answer.action";
 import { hasSavedQuestion } from "@/lib/actions/collection.action";
 import { getQuestion, incrementViews } from "@/lib/actions/question.action";
 import { hasVoted } from "@/lib/actions/vote.action";
+import { loadSearchParams } from "@/lib/loaders";
 import { formatNumber } from "@/lib/utils";
 import { RouteParams } from "@/types/module";
 
-const QuestionDetails = async ({ params }: RouteParams) => {
+const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
   const { id } = await params;
+  const { page, pageSize, filter } = await loadSearchParams(searchParams);
   const { success, data: question } = await getQuestion({ questionId: id });
 
   // Increment question views when user visits the page (Approach #2)
@@ -42,12 +44,7 @@ const QuestionDetails = async ({ params }: RouteParams) => {
     success: areAnswersLoaded,
     data: answersResult,
     error: answersError,
-  } = await getAnswers({
-    questionId: id,
-    page: 1,
-    pageSize: 10,
-    filter: "latest",
-  });
+  } = await getAnswers({ questionId: id, page, pageSize, filter });
 
   const hasVotedPromise = hasVoted({
     targetId: question._id,

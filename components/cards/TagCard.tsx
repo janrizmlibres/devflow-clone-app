@@ -68,8 +68,11 @@ const TagCard = ({
     );
 
   return (
-    <Link href={ROUTES.TAG(_id)} className="shadow-light100_darknone">
-      <article className="flex w-full flex-col rounded-2xl border light-border background-light900_dark200 px-8 py-10 sm:w-[260px]">
+    <Link
+      href={ROUTES.TAG(_id)}
+      className="shadow-light100_darknone max-sm:w-full"
+    >
+      <article className="flex flex-col rounded-2xl border light-border background-light900_dark200 px-8 py-10 sm:w-[260px]">
         <div className="flex-between gap-3">
           <div className="w-fit rounded-sm background-light800_dark400 px-5 py-1.5">
             <p className="paragraph-semibold text-dark300_light900">{name}</p>
