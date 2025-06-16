@@ -1,5 +1,6 @@
 "use server";
 
+import escape from "escape-string-regexp";
 import mongoose, { FilterQuery, HydratedDocument, Types } from "mongoose";
 
 import Question, { IQuestion, IQuestionDoc } from "@/database/question.model";
@@ -253,8 +254,8 @@ export async function getQuestions(
 
   if (query) {
     filterQuery.$or = [
-      { title: { $regex: query, $options: "i" } },
-      { content: { $regex: query, $options: "i" } },
+      { title: { $regex: escape(query), $options: "i" } },
+      { content: { $regex: escape(query), $options: "i" } },
     ];
   }
 

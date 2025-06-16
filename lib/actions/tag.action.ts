@@ -1,5 +1,6 @@
 "use server";
 
+import escape from "escape-string-regexp";
 import { FilterQuery } from "mongoose";
 
 import { Question, Tag } from "@/database";
@@ -104,7 +105,10 @@ export async function getTagQuestions(
     };
 
     if (query) {
-      filterQuery.title = { $regex: query, $options: "i" };
+      filterQuery.title = {
+        $regex: escape(query),
+        $options: "i",
+      };
     }
 
     const totalQuestions = await Question.countDocuments(filterQuery);

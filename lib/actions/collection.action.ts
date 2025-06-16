@@ -1,5 +1,6 @@
 "use server";
 
+import escape from "escape-string-regexp";
 import { PipelineStage, Types } from "mongoose";
 import { revalidatePath } from "next/cache";
 
@@ -147,8 +148,8 @@ export async function getSavedQuestions(
       pipeline.push({
         $match: {
           $or: [
-            { "question.title": { $regex: query, $options: "i" } },
-            { "question.content": { $regex: query, $options: "i" } },
+            { "question.title": { $regex: escape(query), $options: "i" } },
+            { "question.content": { $regex: escape(query), $options: "i" } },
           ],
         },
       });
