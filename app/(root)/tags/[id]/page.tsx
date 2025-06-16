@@ -1,6 +1,8 @@
 import QuestionCard from "@/components/cards/QuestionCard";
 import DataRenderer from "@/components/DataRenderer";
+import CommonFilter from "@/components/filters/CommonFilter";
 import LocalSearch from "@/components/search/LocalSearch";
+import { HomePageFilters } from "@/constants/filters";
 import { EMPTY_QUESTION } from "@/constants/states";
 import { getTagQuestions } from "@/lib/actions/tag.action";
 import { loadSearchParams } from "@/lib/loaders";
@@ -8,13 +10,15 @@ import { RouteParams } from "@/types/module";
 
 const Page = async ({ params, searchParams }: RouteParams) => {
   const { id } = await params;
-  const { page, pageSize, query } = await loadSearchParams(searchParams);
+  const { page, pageSize, query, filter } =
+    await loadSearchParams(searchParams);
 
   const { success, data, error } = await getTagQuestions({
     tagId: id,
     page,
     pageSize,
     query,
+    filter,
   });
 
   const { tag, questions } = data || {};
@@ -25,13 +29,18 @@ const Page = async ({ params, searchParams }: RouteParams) => {
         <h1 className="h1-bold text-dark100_light900">{tag?.name}</h1>
       </section>
 
-      <section className="mt-11">
+      <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
         <LocalSearch
           imgSrc="/icons/search.svg"
           placeholder="Search questions..."
           className="flex-1"
         />
-      </section>
+
+        <CommonFilter
+          filters={HomePageFilters}
+          otherClasses="min-h-[56px] min-w-[170px]"
+        />
+      </div>
 
       <DataRenderer
         success={success}

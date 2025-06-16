@@ -92,7 +92,7 @@ export async function getTagQuestions(
     return handleError(validatedResult) as ErrorResponse;
   }
 
-  const { tagId, page = 1, pageSize = 10, query } = params;
+  const { tagId, page = 1, pageSize = 10, query, filter } = params;
   const skip = (page - 1) * pageSize;
   const limit = pageSize;
 
@@ -111,6 +111,23 @@ export async function getTagQuestions(
       };
     }
 
+    let sortCriteria = {};
+
+    switch (filter) {
+      case "newest":
+        sortCriteria = { createdAt: -1 };
+        break;
+      case "unanswered":
+        filterQuery.answers = 0;
+        sortCriteria = { createdAt: -1 };
+        break;
+      case "popular":
+        sortCriteria = { upvotes: -1 };
+        break;
+      default:
+        sortCriteria = { createdAt: -1 };
+    }
+
     const totalQuestions = await Question.countDocuments(filterQuery);
 
     const questions = await Question.find(filterQuery)
@@ -119,6 +136,7 @@ export async function getTagQuestions(
         { path: "author", select: "name image" },
         { path: "tags", select: "name" },
       ])
+      .sort(sortCriteria)
       .skip(skip)
       .limit(limit);
 
