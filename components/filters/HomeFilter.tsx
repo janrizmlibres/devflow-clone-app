@@ -6,18 +6,11 @@ import { cn } from "@/lib/utils";
 
 import { Button } from "../ui/button";
 
-const filters = [
-  {
-    name: "React",
-    value: "react",
-  },
-  {
-    name: "NextJS",
-    value: "nextjs",
-  },
-];
-
-const HomeFilter = () => {
+const HomeFilter = ({
+  filters,
+}: {
+  filters: { name: string; value: string }[];
+}) => {
   const [filter, setFilter] = useQueryState("filter", { shallow: false });
 
   const handleTypeClick = (value: string) => {

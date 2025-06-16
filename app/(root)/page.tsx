@@ -51,7 +51,7 @@ const Home = async ({ searchParams }: RouteParams) => {
           containerClasses="hidden max-sm:flex"
         />
       </section>
-      <HomeFilter />
+      <HomeFilter filters={HomePageFilters} />
 
       <DataRenderer
         success={success}
