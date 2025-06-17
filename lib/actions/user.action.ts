@@ -1,8 +1,8 @@
 "use server";
 
-import { FilterQuery } from "mongoose";
+import { FilterQuery, PipelineStage, Types } from "mongoose";
 
-import { Answer, Question, User } from "@/database";
+import { Answer, Question, Tag, User } from "@/database";
 
 import action from "../handlers/action";
 import handleError from "../handlers/error";
@@ -11,6 +11,7 @@ import {
   GetUserAnswersSchema,
   GetUserQuestionsSchema,
   GetUserSchema,
+  GetUserTagsSchema,
   PaginatedSearchParamsSchema,
 } from "../validations";
 
@@ -185,6 +186,73 @@ export async function getUserAnswers(params: GetUserAnswersParams): Promise<
       success: true,
       data: { answers: JSON.parse(JSON.stringify(answers)), isNext },
     };
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
+  }
+}
+
+export async function getUserTopTags(
+  params: GetUserTagsParams
+): Promise<ActionResponse<{ tags: Tag[] }>> {
+  const validationResult = await action({
+    params,
+    schema: GetUserTagsSchema,
+  });
+
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+
+  const { userId } = params;
+
+  try {
+    const pipeline: PipelineStage[] = [
+      { $match: { author: new Types.ObjectId(userId) } },
+      { $unwind: "$tags" },
+      { $group: { _id: "$tags", questions: { $sum: 1 } } },
+      {
+        $lookup: {
+          from: "tags",
+          localField: "_id",
+          foreignField: "_id",
+          as: "tagInfo",
+        },
+      },
+      { $unwind: "$tagInfo" },
+      { $sort: { questions: -1 } },
+      { $limit: 10 },
+      {
+        $project: {
+          _id: "$tagInfo._id",
+          name: "$tagInfo.name",
+          questions: 1,
+        },
+      },
+    ];
+
+    const tags = await Question.aggregate(pipeline);
+
+    return { success: true, data: { tags: JSON.parse(JSON.stringify(tags)) } };
+
+    // const questions: IQuestionDoc[] = await Question.find({
+    //   author: userId,
+    // }).populate("tags");
+    // const tagMap: Map<string, { tag: ITagDoc; count: number }> = new Map();
+    // for (const question of questions) {
+    //   question.tags.forEach((tag) => {
+    //     const tagId = tag._id.toString();
+    //     if (!tagMap.has(tagId)) {
+    //       tagMap.set(tagId, { tag: tag as ITagDoc, count: 1 });
+    //     } else {
+    //       tagMap.get(tagId)!.count += 1;
+    //     }
+    //   });
+    // }
+    // const sortedTags = Array.from(tagMap.values())
+    //   .sort((a, b) => b.count - a.count)
+    //   .slice(0, 5)
+    //   .map((entry) => entry.tag);
+    // return { success: true, data: JSON.parse(JSON.stringify(sortedTags)) };
   } catch (error) {
     return handleError(error) as ErrorResponse;
   }
