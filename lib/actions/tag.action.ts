@@ -96,37 +96,37 @@ export async function getTagQuestions(
   const skip = (page - 1) * pageSize;
   const limit = pageSize;
 
+  const filterQuery: FilterQuery<typeof Question> = {
+    tags: { $in: [tagId] },
+  };
+
+  if (query) {
+    filterQuery.title = {
+      $regex: escape(query),
+      $options: "i",
+    };
+  }
+
+  let sortCriteria = {};
+
+  switch (filter) {
+    case "newest":
+      sortCriteria = { createdAt: -1 };
+      break;
+    case "unanswered":
+      filterQuery.answers = 0;
+      sortCriteria = { createdAt: -1 };
+      break;
+    case "popular":
+      sortCriteria = { upvotes: -1 };
+      break;
+    default:
+      sortCriteria = { createdAt: -1 };
+  }
+
   try {
     const tag = await Tag.findById(tagId);
     if (!tag) throw new NotFoundError("Tag");
-
-    const filterQuery: FilterQuery<typeof Question> = {
-      tags: { $in: [tagId] },
-    };
-
-    if (query) {
-      filterQuery.title = {
-        $regex: escape(query),
-        $options: "i",
-      };
-    }
-
-    let sortCriteria = {};
-
-    switch (filter) {
-      case "newest":
-        sortCriteria = { createdAt: -1 };
-        break;
-      case "unanswered":
-        filterQuery.answers = 0;
-        sortCriteria = { createdAt: -1 };
-        break;
-      case "popular":
-        sortCriteria = { upvotes: -1 };
-        break;
-      default:
-        sortCriteria = { createdAt: -1 };
-    }
 
     const totalQuestions = await Question.countDocuments(filterQuery);
 
