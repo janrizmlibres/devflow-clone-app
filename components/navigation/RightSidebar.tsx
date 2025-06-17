@@ -9,12 +9,10 @@ import TagCard from "../cards/TagCard";
 import DataRenderer from "../DataRenderer";
 
 const RightSidebar = async () => {
-  const { success, data: hotQuestions, error } = await getHotQuestions();
-  const {
-    success: tagSuccess,
-    data: tags,
-    error: tagError,
-  } = await getTopTags();
+  const [
+    { success, data: hotQuestions, error },
+    { success: tagSuccess, data: tags, error: tagError },
+  ] = await Promise.all([getHotQuestions(), getTopTags()]);
 
   return (
     <section className="custom-scrollbar sticky top-0 right-0 flex h-screen w-[350px] flex-col gap-6 overflow-y-auto border-l light-border background-light900_dark200 p-6 pt-36 shadow-light-300 max-xl:hidden dark:shadow-none">
