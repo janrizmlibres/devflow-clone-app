@@ -5,10 +5,16 @@ import { Suspense } from "react";
 
 import ROUTES from "@/constants/routes";
 import { hasVoted } from "@/lib/actions/vote.action";
+import { cn } from "@/lib/utils";
 
 import Preview from "../editor/Preview";
 import UserAvatar from "../UserAvatar";
 import Votes from "../votes/Votes";
+
+interface Props extends Answer {
+  containerClasses?: string;
+  showReadMore?: boolean;
+}
 
 const AnswerCard = ({
   _id,
@@ -17,15 +23,18 @@ const AnswerCard = ({
   createdAt,
   upvotes,
   downvotes,
-}: Answer) => {
+  question,
+  containerClasses,
+  showReadMore = false,
+}: Props) => {
   const hasVotedPromise = hasVoted({
     targetId: _id,
     targetType: "Answer",
   });
 
   return (
-    <article className="border-b light-border py-10">
-      <span id={JSON.stringify(_id)} className="hash-span" />
+    <article className={cn("border-b light-border py-10", containerClasses)}>
+      <span id={`answer-${_id}`} className="hash-span" />
 
       <div className="mb-5 flex flex-col-reverse justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
         <div className="flex flex-1 items-start gap-1 sm:items-center">
@@ -67,6 +76,15 @@ const AnswerCard = ({
       </div>
 
       <Preview content={content} />
+
+      {showReadMore && (
+        <Link
+          href={`${ROUTES.QUESTION(question)}#answer-${_id}`}
+          className="relative z-10 font-space-grotesk body-semibold text-primary-500"
+        >
+          <p className="mt-1">Read more...</p>
+        </Link>
+      )}
     </article>
   );
 };
