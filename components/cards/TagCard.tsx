@@ -21,7 +21,6 @@ const TagCard = ({
   name,
   questions,
   showCount,
-
   compact,
   remove,
   isButton,
