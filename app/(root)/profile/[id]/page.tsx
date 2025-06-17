@@ -40,23 +40,37 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
 
   const { user, totalQuestions, totalAnswers } = data!;
 
+  const getUserQuestionsPromise = getUserQuestions({
+    userId: id,
+    page,
+    pageSize,
+  });
+  const getUserAnswersPromise = getUserAnswers({ userId: id, page, pageSize });
+  const getUserTopTagsPromise = getUserTopTags({ userId: id });
+
+  const [questionsResponse, answersResponse, tagsResponse] = await Promise.all([
+    getUserQuestionsPromise,
+    getUserAnswersPromise,
+    getUserTopTagsPromise,
+  ]);
+
   const {
     success: userQuestionsSuccess,
     data: userQuestions,
     error: userQuestionsError,
-  } = await getUserQuestions({ userId: id, page, pageSize });
+  } = questionsResponse;
 
   const {
     success: userAnswersSuccess,
     data: userAnswers,
     error: userAnswersError,
-  } = await getUserAnswers({ userId: id, page, pageSize });
+  } = answersResponse;
 
   const {
     success: userTagsSuccess,
     data: userTags,
     error: userTagsError,
-  } = await getUserTopTags({ userId: id });
+  } = tagsResponse;
 
   const { questions, isNext: hasMoreQuestions } = userQuestions!;
   const { answers, isNext: hasMoreAnswers } = userAnswers!;
@@ -128,7 +142,7 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
       <section className="mt-10 flex gap-10">
         <Tabs defaultValue="top-posts" className="flex-[2]">
           <TabsList className="min-h-[42px] background-light800_dark400 p-1">
-            <TabsTrigger value="top-posts" className="tab">
+            <TabsTrigger value="top-posts" className="z-10 tab">
               Top Posts
             </TabsTrigger>
             <TabsTrigger value="answers" className="tab">
@@ -145,9 +159,15 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
               success={userQuestionsSuccess}
               error={userQuestionsError}
               render={(hotQuestions) => (
-                <div className="flex w-full flex-col gap-6">
+                <div className="flex w-full flex-col gap-10">
                   {hotQuestions.map((question) => (
-                    <QuestionCard key={question._id} question={question} />
+                    <QuestionCard
+                      key={question._id}
+                      question={question}
+                      showActionBtns={
+                        loggedInUser?.user?.id === question.author._id
+                      }
+                    />
                   ))}
                 </div>
               )}
@@ -156,20 +176,26 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
             <Pagination page={page} isNext={hasMoreQuestions} />
           </TabsContent>
 
-          <TabsContent value="answers" className="flex w-full flex-col gap-6">
+          <TabsContent
+            value="answers"
+            className="mt-5 flex w-full flex-col gap-6"
+          >
             <DataRenderer
               data={answers}
               empty={EMPTY_ANSWERS}
               success={userAnswersSuccess}
               error={userAnswersError}
               render={(answers) => (
-                <div className="flex w-full flex-col gap-6">
+                <div className="flex w-full flex-col gap-10">
                   {answers.map((answer) => (
                     <AnswerCard
                       key={answer._id}
                       {...answer}
                       content={answer.content.slice(0, 27)}
                       containerClasses="rounded-[10px] card-wrapper px-7 py-9 sm:px-11"
+                      showActionBtns={
+                        loggedInUser?.user?.id === answer.author._id
+                      }
                       showReadMore
                     />
                   ))}
@@ -183,7 +209,7 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
 
         <div className="flex w-full min-w-[250px] flex-1 flex-col max-lg:hidden">
           <h3 className="h3-bold text-dark200_light900">Top Tech</h3>
-          <div className="mt-7 flex flex-col gap-4">
+          <div className="mt-6 flex flex-col gap-4">
             <DataRenderer
               data={tags}
               empty={EMPTY_TAGS}

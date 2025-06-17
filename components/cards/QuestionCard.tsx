@@ -5,20 +5,23 @@ import ROUTES from "@/constants/routes";
 
 import TagCard from "./TagCard";
 import Metric from "../Metric";
+import EditDeleteAction from "../user/EditDeleteAction";
 
 interface Props {
   question: Question;
+  showActionBtns?: boolean;
 }
 
 const QuestionCard = async ({
   question: { _id, title, tags, author, createdAt, upvotes, answers, views },
+  showActionBtns = false,
 }: Props) => {
   const formattedDate = formatDistanceToNow(createdAt);
 
   return (
     <div className="rounded-[10px] card-wrapper p-9 sm:px-11">
-      <div className="flex flex-col-reverse items-start justify-between gap-5 sm:flex-row">
-        <div>
+      <div className="flex-between flex-col-reverse gap-5 sm:flex-row">
+        <div className="flex-1">
           <span className="line-clamp-1 flex subtle-regular text-dark400_light700 sm:hidden">
             {formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1)} ago
           </span>
@@ -29,6 +32,8 @@ const QuestionCard = async ({
             </h3>
           </Link>
         </div>
+
+        {showActionBtns && <EditDeleteAction type="Question" itemId={_id} />}
       </div>
 
       <div className="mt-3.5 flex w-full flex-wrap gap-2">
