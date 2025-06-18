@@ -75,6 +75,7 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
   const { questions, isNext: hasMoreQuestions } = userQuestions!;
   const { answers, isNext: hasMoreAnswers } = userAnswers!;
   const { tags } = userTags!;
+  console.log("Tags:" + tags);
 
   const { _id, name, username, image, bio, portfolio, location, createdAt } =
     user;

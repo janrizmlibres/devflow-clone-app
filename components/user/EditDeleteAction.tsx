@@ -16,6 +16,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import ROUTES from "@/constants/routes";
+import { deleteUserQuestion } from "@/lib/actions/question.action";
 
 interface Props {
   type: "Question" | "Answer";
@@ -31,6 +32,15 @@ const EditDeleteAction = ({ type, itemId }: Props) => {
 
   const handleDelete = async () => {
     if (type === "Question") {
+      const { success } = await deleteUserQuestion({ questionId: itemId });
+
+      if (!success) {
+        toast.error("Error", {
+          description: "Failed to delete question. Please try again.",
+        });
+        return;
+      }
+
       toast("Question deleted", {
         description: "Your question has been deleted successfully.",
       });
