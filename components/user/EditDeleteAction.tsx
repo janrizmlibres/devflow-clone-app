@@ -16,7 +16,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import ROUTES from "@/constants/routes";
-import { deleteUserQuestion } from "@/lib/actions/question.action";
+import { deleteAnswer } from "@/lib/actions/answer.action";
+import { deleteQuestion } from "@/lib/actions/question.action";
 
 interface Props {
   type: "Question" | "Answer";
@@ -31,24 +32,21 @@ const EditDeleteAction = ({ type, itemId }: Props) => {
   };
 
   const handleDelete = async () => {
-    if (type === "Question") {
-      const { success } = await deleteUserQuestion({ questionId: itemId });
+    const { success } =
+      type === "Question"
+        ? await deleteQuestion({ questionId: itemId })
+        : await deleteAnswer({ answerId: itemId });
 
-      if (!success) {
-        toast.error("Error", {
-          description: "Failed to delete question. Please try again.",
-        });
-        return;
-      }
-
-      toast("Question deleted", {
-        description: "Your question has been deleted successfully.",
+    if (!success) {
+      toast.error("Error", {
+        description: `Failed to delete ${type.toLowerCase()}. Please try again.`,
       });
-    } else if (type === "Answer") {
-      toast("Answer deleted", {
-        description: "Your answer has been deleted successfully.",
-      });
+      return;
     }
+
+    toast(`${type} deleted`, {
+      description: `Your ${type.toLowerCase()} has been deleted successfully.`,
+    });
   };
 
   return (
@@ -75,8 +73,7 @@ const EditDeleteAction = ({ type, itemId }: Props) => {
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete your
-              {type === "Question" ? " question" : " answer"} and remove it from
-              our servers.
+              {type.toString().toLowerCase()} and remove it from our servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

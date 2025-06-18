@@ -16,7 +16,7 @@ import { NotFoundError, UnauthorizedError } from "../http-errors";
 import dbConnect from "../mongoose";
 import {
   AskQuestionSchema,
-  DeleteUserQuestionScema,
+  DeleteQuestionSchema,
   EditQuestionSchema,
   GetQuestionSchema,
   IncrementViewsSchema,
@@ -354,12 +354,12 @@ export async function getHotQuestions(): Promise<ActionResponse<Question[]>> {
   }
 }
 
-export async function deleteUserQuestion(
-  params: DeleteUserQuestionParams
+export async function deleteQuestion(
+  params: DeleteQuestionParams
 ): Promise<ActionResponse> {
   const validationResult = await action({
     params,
-    schema: DeleteUserQuestionScema,
+    schema: DeleteQuestionSchema,
     authorize: true,
   });
 
