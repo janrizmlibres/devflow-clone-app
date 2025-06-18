@@ -42,6 +42,24 @@ export const sidebarLinks = [
   },
 ];
 
+export const REPUTATION_POINTS: Record<
+  string,
+  { performer: number; author: number }
+> = {
+  post_Question: { performer: 5, author: 5 },
+  post_Answer: { performer: 10, author: 10 },
+  upvote_Question: { performer: 2, author: 10 },
+  upvote_Answer: { performer: 2, author: 10 },
+  downvote_Question: { performer: -1, author: -2 },
+  downvote_Answer: { performer: -1, author: -2 },
+  delete_Question: { performer: -5, author: -5 },
+  delete_Answer: { performer: -10, author: -10 },
+  view_Question: { performer: 1, author: 2 },
+  view_Answer: { performer: 1, author: 2 },
+  bookmark_Question: { performer: 1, author: 2 },
+  bookmark_Answer: { performer: 1, author: 2 },
+};
+
 export const BADGE_CRITERIA = {
   QUESTION_COUNT: {
     BRONZE: 10,

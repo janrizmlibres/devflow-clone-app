@@ -75,7 +75,6 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
   const { questions, isNext: hasMoreQuestions } = userQuestions!;
   const { answers, isNext: hasMoreAnswers } = userAnswers!;
   const { tags } = userTags!;
-  console.log("Tags:" + tags);
 
   const { _id, name, username, image, bio, portfolio, location, createdAt } =
     user;
@@ -138,6 +137,7 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
         totalQuestions={totalQuestions}
         totalAnswers={totalAnswers}
         badges={{ GOLD: 0, SILVER: 0, BRONZE: 0 }}
+        reputationPoints={user.reputation || 0}
       />
 
       <section className="mt-10 flex gap-10">
