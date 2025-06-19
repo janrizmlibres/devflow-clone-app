@@ -1,14 +1,12 @@
 import { HydratedDocument, model, models, Schema, Types } from "mongoose";
 
 export const InteractionActionEnums = [
-  "view",
-  "edit",
   "post",
   "upvote",
   "downvote",
   "delete",
+  "view",
   "bookmark",
-  "search",
 ] as const;
 
 export interface IInteraction {

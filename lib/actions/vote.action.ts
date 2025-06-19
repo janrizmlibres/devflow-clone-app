@@ -2,6 +2,7 @@
 
 import mongoose, { ClientSession } from "mongoose";
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
 
 import ROUTES from "@/constants/routes";
 import { Answer, Question, Vote } from "@/database";
@@ -9,12 +10,13 @@ import { IVoteDoc } from "@/database/vote.model";
 
 import action from "../handlers/action";
 import handleError from "../handlers/error";
-import { UnauthorizedError } from "../http-errors";
+import { NotFoundError, UnauthorizedError } from "../http-errors";
 import {
   CreateVoteSchema,
   HasVotedSchema,
   UpdateVoteCountSchema,
 } from "../validations";
+import { createInteraction } from "./interaction.action";
 
 export async function updateVoteCount(
   params: UpdateVoteCountParams,
@@ -130,7 +132,23 @@ export async function createVote(
       );
     }
 
+    const Model = targetType === "Question" ? Question : Answer;
+
+    const contentDoc = await Model.findById(targetId).session(session);
+    if (!contentDoc) throw new NotFoundError("Content");
+
+    const contentAuthorId = contentDoc.author.toString();
+
     await session.commitTransaction();
+
+    after(async () => {
+      await createInteraction({
+        action: voteType,
+        actionId: targetId,
+        actionTarget: targetType,
+        authorId: contentAuthorId,
+      });
+    });
 
     revalidatePath(ROUTES.QUESTION(targetId));
 

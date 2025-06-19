@@ -16,7 +16,6 @@ import Votes from "@/components/votes/Votes";
 import ROUTES from "@/constants/routes";
 import { getAnswers } from "@/lib/actions/answer.action";
 import { hasSavedQuestion } from "@/lib/actions/collection.action";
-import { createInteraction } from "@/lib/actions/interaction.action";
 import { getQuestion, incrementViews } from "@/lib/actions/question.action";
 import { hasVoted } from "@/lib/actions/vote.action";
 import { loadSearchParams } from "@/lib/loaders";
@@ -33,13 +32,6 @@ const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
   //   incrementViews({ questionId: id }),
   //   getQuestion({ questionId: id }),
   // ]);
-
-  createInteraction({
-    action: "view",
-    actionTarget: "Question",
-    actionId: id,
-    authorId: question?.author._id || "",
-  });
 
   // Increment question views after the component is rendered (Approach #3)
   after(async () => {

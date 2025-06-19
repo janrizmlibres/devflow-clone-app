@@ -3,6 +3,7 @@
 import escape from "escape-string-regexp";
 import mongoose, { FilterQuery, HydratedDocument, Types } from "mongoose";
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
 
 import ROUTES from "@/constants/routes";
 import { Answer, Collection, Vote } from "@/database";
@@ -22,6 +23,7 @@ import {
   IncrementViewsSchema,
   PaginatedSearchParamsSchema,
 } from "../validations";
+import { createInteraction } from "./interaction.action";
 
 export async function createQuestion(
   params: CreateQuestionParams
@@ -81,6 +83,15 @@ export async function createQuestion(
     );
 
     await session.commitTransaction();
+
+    after(async () => {
+      await createInteraction({
+        action: "post",
+        actionId: question._id.toString(),
+        actionTarget: "Question",
+        authorId: userId!,
+      });
+    });
 
     return {
       success: true,
@@ -224,6 +235,15 @@ export async function getQuestion(
     if (!question) {
       throw new NotFoundError("Question not found.");
     }
+
+    after(async () => {
+      await createInteraction({
+        action: "view",
+        actionId: questionId,
+        actionTarget: "Question",
+        authorId: question.author.toString(),
+      });
+    });
 
     return {
       success: true,
@@ -378,7 +398,7 @@ export async function deleteQuestion(
 
     if (!question) throw new NotFoundError("Question");
 
-    if (question?.author.toString() !== userId) {
+    if (question.author.toString() !== userId) {
       throw new UnauthorizedError();
     }
 
@@ -418,6 +438,15 @@ export async function deleteQuestion(
     await Question.findByIdAndDelete(questionId, { session });
 
     await session.commitTransaction();
+
+    after(async () => {
+      await createInteraction({
+        action: "delete",
+        actionId: questionId,
+        actionTarget: "Question",
+        authorId: question.author.toString(),
+      });
+    });
 
     revalidatePath(ROUTES.PROFILE(userId!));
 

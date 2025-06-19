@@ -3,9 +3,11 @@
 import escape from "escape-string-regexp";
 import { PipelineStage, Types } from "mongoose";
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
 
 import ROUTES from "@/constants/routes";
 import { Collection, Question } from "@/database";
+import { IQuestionDoc } from "@/database/question.model";
 
 import action from "../handlers/action";
 import handleError from "../handlers/error";
@@ -14,6 +16,7 @@ import {
   CollectionBaseSchema,
   PaginatedSearchParamsSchema,
 } from "../validations";
+import { createInteraction } from "./interaction.action";
 
 export async function toggleSaveQuestion(
   params: CollectionBaseParams
@@ -32,7 +35,7 @@ export async function toggleSaveQuestion(
   const userId = validationResult.session?.user?.id;
 
   try {
-    const question = await Question.findById(questionId);
+    const question: IQuestionDoc | null = await Question.findById(questionId);
 
     if (!question) throw new NotFoundError("Question");
 
@@ -44,7 +47,19 @@ export async function toggleSaveQuestion(
     if (collection) {
       await Collection.findByIdAndDelete(collection._id);
     } else {
-      await Collection.create({ author: userId, question: questionId });
+      await Collection.create({
+        author: userId,
+        question: questionId,
+      });
+
+      after(async () => {
+        await createInteraction({
+          action: "bookmark",
+          actionId: questionId,
+          actionTarget: "Question",
+          authorId: question.author.toString(),
+        });
+      });
     }
 
     revalidatePath(ROUTES.QUESTION(questionId));
