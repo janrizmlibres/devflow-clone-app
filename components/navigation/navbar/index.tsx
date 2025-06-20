@@ -21,7 +21,7 @@ const Navbar = async () => {
         />
 
         <p className="font-space-grotesk h2-bold text-dark-100 max-sm:hidden dark:text-light-900">
-          Dev <span className="text-primary-500">Flow</span>
+          Dev<span className="text-primary-500">Flow</span>
         </p>
       </Link>
 

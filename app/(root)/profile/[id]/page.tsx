@@ -195,7 +195,7 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
                     <AnswerCard
                       key={answer._id}
                       {...answer}
-                      content={answer.content.slice(0, 27)}
+                      content={answer.content.slice(0, 27) + "..."}
                       containerClasses="rounded-[10px] card-wrapper px-7 py-9 sm:px-11"
                       showActionBtns={
                         loggedInUser?.user?.id === answer.author._id
