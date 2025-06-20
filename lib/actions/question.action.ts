@@ -4,6 +4,7 @@ import escapeRegex from "escape-string-regexp";
 import mongoose, { FilterQuery, HydratedDocument, Types } from "mongoose";
 import { revalidatePath } from "next/cache";
 import { after } from "next/server";
+import { cache } from "react";
 
 import { auth } from "@/auth";
 import ROUTES from "@/constants/routes";
@@ -213,47 +214,47 @@ export async function editQuestion(
   }
 }
 
-export async function getQuestion(
-  params: GetQuestionParams
-): Promise<ActionResponse<Question>> {
-  const validationResult = await action({
-    params,
-    schema: GetQuestionSchema,
-    authorize: true,
-  });
-
-  if (validationResult instanceof Error) {
-    return handleError(validationResult) as ErrorResponse;
-  }
-
-  const { questionId } = validationResult.params!;
-
-  try {
-    const question = await Question.findById(questionId)
-      .populate("tags")
-      .populate("author", "_id name image");
-
-    if (!question) {
-      throw new NotFoundError("Question not found.");
-    }
-
-    after(async () => {
-      await createInteraction({
-        action: "view",
-        actionId: questionId,
-        actionTarget: "Question",
-        authorId: question.author.toString(),
-      });
+export const getQuestion = cache(
+  async (params: GetQuestionParams): Promise<ActionResponse<Question>> => {
+    const validationResult = await action({
+      params,
+      schema: GetQuestionSchema,
+      authorize: true,
     });
 
-    return {
-      success: true,
-      data: JSON.parse(JSON.stringify(question.toObject())),
-    };
-  } catch (error) {
-    return handleError(error) as ErrorResponse;
+    if (validationResult instanceof Error) {
+      return handleError(validationResult) as ErrorResponse;
+    }
+
+    const { questionId } = validationResult.params!;
+
+    try {
+      const question = await Question.findById(questionId)
+        .populate("tags")
+        .populate("author", "_id name image");
+
+      if (!question) {
+        throw new NotFoundError("Question not found.");
+      }
+
+      after(async () => {
+        await createInteraction({
+          action: "view",
+          actionId: questionId,
+          actionTarget: "Question",
+          authorId: question.author.toString(),
+        });
+      });
+
+      return {
+        success: true,
+        data: JSON.parse(JSON.stringify(question.toObject())),
+      };
+    } catch (error) {
+      return handleError(error) as ErrorResponse;
+    }
   }
-}
+);
 
 export async function getRecommendedQuestions({
   userId,
