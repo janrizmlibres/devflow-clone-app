@@ -92,3 +92,10 @@ interface DeleteQuestionParams {
 interface DeleteAnswerParams {
   answerId: string;
 }
+
+interface RecommendationParams {
+  userId: string;
+  query?: string;
+  skip: number;
+  limit: number;
+}
