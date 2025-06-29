@@ -59,7 +59,7 @@ export async function PUT(
     const validatedData = AccountSchema.partial().safeParse(body);
 
     if (!validatedData.success) {
-      return new ValidationError(validatedData.error.flatten().fieldErrors);
+      throw new ValidationError(validatedData.error.flatten().fieldErrors);
     }
 
     const updatedAccount = await Account.findByIdAndUpdate(id, validatedData, {
