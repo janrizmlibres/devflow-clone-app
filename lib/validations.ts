@@ -1,7 +1,5 @@
 import { z } from "zod";
 
-import { InteractionActionEnums } from "@/database/interaction.model";
-
 export const SignInSchema = z.object({
   email: z
     .string()
@@ -224,7 +222,7 @@ export const DeleteAnswerSchema = z.object({
 });
 
 export const CreateInteractionSchema = z.object({
-  action: z.enum(InteractionActionEnums),
+  action: z.enum(["post", "upvote", "downvote", "delete", "view", "bookmark"]),
   actionTarget: z.enum(["Question", "Answer"], {
     message: "Invalid action type.",
   }),
