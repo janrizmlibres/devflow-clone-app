@@ -21,7 +21,6 @@ const Metric = ({
   value,
   title,
   href,
-  isAuthor = false,
   textStyles,
   imgStyles,
   titleStyles,
