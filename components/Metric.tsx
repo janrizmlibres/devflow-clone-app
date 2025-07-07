@@ -27,13 +27,21 @@ const Metric = ({
 }: Props) => {
   const metricContent = (
     <>
-      <Image
-        src={imgUrl}
-        width={16}
-        height={16}
-        alt={alt}
-        className={`rounded-full object-contain ${imgStyles}`}
-      />
+      {imgUrl ? (
+        <Image
+          src={imgUrl}
+          width={16}
+          height={16}
+          alt={alt}
+          className={`rounded-full object-contain ${imgStyles}`}
+        />
+      ) : (
+        <div
+          className={`flex h-4 w-4 items-center justify-center rounded-full background-light800_dark400 text-[10px] ${imgStyles}`}
+        >
+          ?
+        </div>
+      )}
 
       <p className={`${textStyles} flex items-center gap-1`}>
         {value}
