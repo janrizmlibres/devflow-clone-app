@@ -1,5 +1,7 @@
+import { redirect } from "next/navigation";
+
 const FindJobs = () => {
-  return <div>FindJobs</div>;
+  return redirect("/");
 };
 
 export default FindJobs;
