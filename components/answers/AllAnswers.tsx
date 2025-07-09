@@ -22,14 +22,14 @@ const AllAnswers = ({
 }: Props) => {
   return (
     <div className="mt-11">
-      <div className="flex-between">
-        <h3 className="primary-text-gradient">
+      <div className="flex-between gap-5">
+        <h3 className="primary-text-gradient text-nowrap">
           {totalAnswers} Answer{totalAnswers !== 1 && "s"}
         </h3>
         <CommonFilter
           filters={AnswerFilters}
           otherClasses="sm:min-w-32"
-          containerClasses="max-xs:w-full"
+          containerClasses="z-1 max-xs:w-full"
         />
       </div>
 
