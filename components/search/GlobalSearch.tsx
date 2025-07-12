@@ -61,7 +61,7 @@ const GlobalSearch = () => {
           className="border-none !bg-transparent paragraph-regular placeholder text-dark400_light700 shadow-none no-focus outline-none"
         />
       </div>
-      {search && <GlobalResult />}
+      {query && search && <GlobalResult />}
     </div>
   );
 };
