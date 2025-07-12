@@ -78,3 +78,9 @@ interface Badges {
   SILVER: number;
   BRONZE: number;
 }
+
+interface GlobalSearchedItem {
+  id: string;
+  type: "question" | "answer" | "user" | "tag";
+  title: string;
+}
