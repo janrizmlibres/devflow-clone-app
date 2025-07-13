@@ -81,6 +81,7 @@ interface Badges {
 
 interface GlobalSearchedItem {
   id: string;
+  answerId?: string;
   type: "question" | "answer" | "user" | "tag";
   title: string;
 }

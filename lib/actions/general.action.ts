@@ -47,6 +47,7 @@ export async function globalSearch(params: GlobalSearchParams) {
                 : item[searchField],
             type,
             id: type === "answer" ? item.question : item._id,
+            answerId: type === "answer" && item._id,
           }))
         );
       }
@@ -69,6 +70,7 @@ export async function globalSearch(params: GlobalSearchParams) {
             : item[modelInfo.searchField],
         type,
         id: type === "answer" ? item.question : item._id,
+        answerId: type === "answer" && item._id,
       }));
     }
 

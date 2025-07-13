@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useQueryState } from "nuqs";
 import { useEffect, useState } from "react";
 
+import ROUTES from "@/constants/routes";
 import { globalSearch } from "@/lib/actions/general.action";
 
 import GlobalFilter from "./filters/GlobalFilter";
@@ -42,17 +43,18 @@ const GlobalResult = () => {
     }
   }, [global, type]);
 
-  const renderLink = (type: string, id: string) => {
+  const renderLink = (type: string, id: string, answerId?: string) => {
     switch (type) {
-      case "question":
       case "answer":
-        return `/questions/${id}`;
+        return `${ROUTES.QUESTION(id)}#answer-${answerId}`;
+      case "question":
+        return ROUTES.QUESTION(id);
       case "user":
-        return `/profile/${id}`;
+        return ROUTES.PROFILE(id);
       case "tag":
-        return `/tags/${id}`;
+        return ROUTES.TAG(id);
       default:
-        return "/";
+        return ROUTES.HOME;
     }
   };
 
@@ -78,7 +80,7 @@ const GlobalResult = () => {
             {result?.length > 0 ? (
               result?.map((item: GlobalSearchedItem, index) => (
                 <Link
-                  href={renderLink(item.type, item.id)}
+                  href={renderLink(item.type, item.id, item.answerId)}
                   key={item.type + item.id + index}
                   className="flex w-full cursor-pointer items-start gap-3 px-5 py-2.5 hover:bg-light-700/50 dark:hover:bg-dark-500/50"
                 >
