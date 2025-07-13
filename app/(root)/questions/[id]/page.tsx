@@ -1,7 +1,7 @@
 import { formatDistanceToNow } from "date-fns";
 import { Metadata } from "next";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { after } from "next/server";
 import { SessionProvider } from "next-auth/react";
 import { Suspense } from "react";
@@ -51,7 +51,7 @@ export async function generateMetadata({
 
 const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
   const session = await auth();
-  if (!session?.user) return redirect("/sign-in");
+  if (!session?.user) return redirect(ROUTES.SIGN_IN);
 
   const { id } = await params;
   const { page, pageSize, filter } = await loadSearchParams(searchParams);
@@ -68,7 +68,7 @@ const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
     await incrementViews({ questionId: id });
   });
 
-  if (!success || !question) return redirect("/404");
+  if (!success || !question) return notFound();
 
   const {
     success: areAnswersLoaded,

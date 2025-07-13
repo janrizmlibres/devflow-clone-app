@@ -7,6 +7,7 @@ import CommonFilter from "@/components/filters/CommonFilter";
 import Pagination from "@/components/Pagination";
 import LocalSearch from "@/components/search/LocalSearch";
 import { CollectionFilters } from "@/constants/filters";
+import ROUTES from "@/constants/routes";
 import { EMPTY_COLLECTIONS } from "@/constants/states";
 import { getSavedQuestions } from "@/lib/actions/collection.action";
 import { loadSearchParams } from "@/lib/loaders";
@@ -14,7 +15,7 @@ import { RouteParams } from "@/types/module";
 
 const Collections = async ({ searchParams }: RouteParams) => {
   const session = await auth();
-  if (!session?.user) return redirect("/sign-in");
+  if (!session?.user) return redirect(ROUTES.SIGN_IN);
 
   const { page, pageSize, query, filter } =
     await loadSearchParams(searchParams);
