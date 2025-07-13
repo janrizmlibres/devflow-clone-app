@@ -18,11 +18,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import ROUTES from "@/constants/routes";
 import { updateUser } from "@/lib/actions/user.action";
 import { ProfileSchema } from "@/lib/validations";
-
-import { Textarea } from "@/components/ui/textarea";
 
 interface Params {
   user: User;
