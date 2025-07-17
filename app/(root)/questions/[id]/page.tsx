@@ -1,12 +1,11 @@
 import { formatDistanceToNow } from "date-fns";
 import { Metadata } from "next";
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { after } from "next/server";
 import { SessionProvider } from "next-auth/react";
 import { Suspense } from "react";
 
-import { auth } from "@/auth";
 import AllAnswers from "@/components/answers/AllAnswers";
 import TagCard from "@/components/cards/TagCard";
 import Preview from "@/components/editor/Preview";
@@ -50,9 +49,6 @@ export async function generateMetadata({
 }
 
 const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
-  const session = await auth();
-  if (!session?.user) return redirect(ROUTES.SIGN_IN);
-
   const { id } = await params;
   const { page, pageSize, filter } = await loadSearchParams(searchParams);
   const { success, data: question } = await getQuestion({ questionId: id });

@@ -219,7 +219,6 @@ export const getQuestion = cache(
     const validationResult = await action({
       params,
       schema: GetQuestionSchema,
-      authorize: true,
     });
 
     if (validationResult instanceof Error) {
