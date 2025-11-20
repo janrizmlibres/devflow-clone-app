@@ -1,4 +1,4 @@
-# DevFlow
+# FlowStack
 
 ![GitHub Release](https://img.shields.io/github/v/release/janrizmlibres/devflow-clone-app?color=orange)
 [![Website](https://img.shields.io/website?url=https%3A%2F%2Fdevflow-clone-app.vercel.app%2F)](http://devflow-clone-app.vercel.app/)
@@ -12,7 +12,7 @@ Here is a working live demo: http://devflow-clone-app.vercel.app/
 
 ## 📝 Description
 
-DevFlow is a modern, community-driven platform designed as a StackOverflow clone. It empowers developers to ask questions, share knowledge, and collaborate on solutions. The platform offers robust features for posting questions, comprehensive search capabilities, commenting on discussions, and analytics to track engagement. It is built with a focus on a seamless user experience and secure authentication powered by NextAuth.js.
+FlowStack is a modern, community-driven platform designed as a StackOverflow clone. It empowers developers to ask questions, share knowledge, and collaborate on solutions. The platform offers robust features for posting questions, comprehensive search capabilities, commenting on discussions, and analytics to track engagement. It is built with a focus on a seamless user experience and secure authentication powered by NextAuth.js.
 
 ## 📖 Table of Contents
 

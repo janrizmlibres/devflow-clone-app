@@ -40,11 +40,11 @@ const MobileNavigation = async () => {
             src="/images/site-logo.svg"
             width={23}
             height={23}
-            alt="Devflow Logo"
+            alt="FlowStack Logo"
           />
 
           <p className="font-space-grotesk h2-bold text-dark-100 dark:text-light-900">
-            Dev <span className="text-primary-500">Flow</span>
+            Flow <span className="text-primary-500">Stack</span>
           </p>
         </Link>
 
