@@ -29,6 +29,7 @@ const Votes = ({
   const { success, data } = use(hasVotedPromise);
 
   const [isLoading, setIsLoading] = useState(false);
+  const [bouncing, setBouncing] = useState<"upvote" | "downvote" | null>(null);
 
   const { hasUpvoted, hasDownvoted } = data || {};
 
@@ -39,6 +40,10 @@ const Votes = ({
       });
 
     setIsLoading(true);
+    setBouncing(voteType);
+
+    // Reset bounce after animation
+    setTimeout(() => setBouncing(null), 300);
 
     try {
       const result = await createVote({
@@ -77,7 +82,7 @@ const Votes = ({
           width={18}
           height={18}
           alt="upvote"
-          className={`cursor-pointer ${isLoading && "opacity-50"}`}
+          className={`cursor-pointer ${isLoading && "opacity-50"} ${bouncing === "upvote" ? "animate-bounce-fast" : ""}`}
           aria-label="Upvote"
           onClick={() => !isLoading && handleVote("upvote")}
         />
@@ -99,7 +104,7 @@ const Votes = ({
           width={18}
           height={18}
           alt="downvote"
-          className={`cursor-pointer ${isLoading && "opacity-50"}`}
+          className={`cursor-pointer ${isLoading && "opacity-50"} ${bouncing === "downvote" ? "animate-bounce-fast" : ""}`}
           aria-label="Downvote"
           onClick={() => !isLoading && handleVote("downvote")}
         />

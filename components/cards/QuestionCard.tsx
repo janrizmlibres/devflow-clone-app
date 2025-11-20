@@ -19,7 +19,7 @@ const QuestionCard = async ({
   const formattedDate = formatDistanceToNow(createdAt);
 
   return (
-    <div className="rounded-[10px] card-wrapper p-9 sm:px-11">
+    <div className="card-wrapper card-interactive rounded-2xl p-9 sm:px-11">
       <div className="flex-between flex-col-reverse gap-5 sm:flex-row">
         <div className="flex-1">
           <span className="line-clamp-1 flex subtle-regular text-dark400_light700 sm:hidden">
@@ -27,7 +27,7 @@ const QuestionCard = async ({
           </span>
 
           <Link href={ROUTES.QUESTION(_id)}>
-            <h3 className="line-clamp-1 flex-1 base-semibold text-dark200_light900 sm:h3-semibold">
+            <h3 className="line-clamp-1 flex-1 base-semibold text-dark200_light900 sm:h3-bold hover:text-primary-500 transition-colors duration-200">
               {title}
             </h3>
           </Link>
@@ -50,8 +50,8 @@ const QuestionCard = async ({
           title={`• asked ${formattedDate} ago`}
           href={ROUTES.PROFILE(author._id)}
           isAuthor
-          textStyles="body-medium text-dark400_light700"
-          titleStyles="max-sm:hidden"
+          textStyles="body-medium text-dark400_light700 group-hover:text-primary-500 transition-colors"
+          titleStyles="max-sm:hidden subtle-regular text-light400_light500"
         />
 
         <div className="flex items-center gap-3 max-sm:flex-wrap max-sm:justify-start">

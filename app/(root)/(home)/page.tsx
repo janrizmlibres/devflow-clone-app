@@ -1,14 +1,10 @@
-import Link from "next/link";
-
 import QuestionCard from "@/components/cards/QuestionCard";
 import DataRenderer from "@/components/DataRenderer";
 import CommonFilter from "@/components/filters/CommonFilter";
 import HomeFilter from "@/components/filters/HomeFilter";
+import Hero from "@/components/home/Hero";
 import Pagination from "@/components/Pagination";
-import LocalSearch from "@/components/search/LocalSearch";
-import { Button } from "@/components/ui/button";
 import { HomePageFilters } from "@/constants/filters";
-import ROUTES from "@/constants/routes";
 import { EMPTY_QUESTION } from "@/constants/states";
 import { getQuestions } from "@/lib/actions/question.action";
 import { loadSearchParams } from "@/lib/loaders";
@@ -29,29 +25,18 @@ const Home = async ({ searchParams }: RouteParams) => {
 
   return (
     <>
-      <section className="flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
-        <h1 className="h1-bold text-dark100_light900">All Questions</h1>
+      <Hero />
 
-        <Button
-          className="min-h-[46px] px-4 py-3 !text-light-900 primary-gradient"
-          asChild
-        >
-          <Link href={ROUTES.ASK_QUESTION}>Ask a Question</Link>
-        </Button>
-      </section>
-      <section className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
-        <LocalSearch
-          imgSrc="/icons/search.svg"
-          placeholder="Search questions..."
-          className="flex-1"
-        />
+      <section className="mt-10 flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
+        <h1 className="h1-bold text-dark100_light900">All Questions</h1>
 
         <CommonFilter
           filters={HomePageFilters}
-          otherClasses="min-h-[56px]"
+          otherClasses="min-h-[56px] sm:min-w-[170px]"
           containerClasses="hidden max-sm:flex"
         />
       </section>
+
       <HomeFilter filters={HomePageFilters} />
 
       <DataRenderer

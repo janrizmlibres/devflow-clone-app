@@ -85,3 +85,21 @@ export function assignBadges(params: {
 
   return badgeCounts;
 }
+
+export const getTagColor = (tagName: string) => {
+  const colors = [
+    "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
+    "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300",
+    "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300",
+    "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300",
+    "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300",
+    "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300",
+    "bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300",
+  ];
+  
+  const hash = tagName.split("").reduce((acc, char) => {
+    return char.charCodeAt(0) + ((acc << 5) - acc);
+  }, 0);
+
+  return colors[Math.abs(hash) % colors.length];
+};

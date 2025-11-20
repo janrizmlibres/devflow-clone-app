@@ -13,7 +13,7 @@ const LeftSidebar = async () => {
   const userId = session?.user?.id;
 
   return (
-    <section className="custom-scrollbar sticky top-0 left-0 flex h-screen flex-col justify-between gap-6 overflow-y-auto border-r light-border background-light900_dark200 p-6 pt-36 shadow-light-300 max-sm:hidden lg:w-[266px] dark:shadow-none">
+    <section className="custom-scrollbar sticky top-0 left-0 flex h-screen flex-col justify-between gap-6 overflow-y-auto border-r border-light-800 dark:border-dark-400/50 bg-light-900/50 dark:bg-dark-200/50 p-6 pt-36 shadow-light-300 max-sm:hidden lg:w-[266px] dark:shadow-none backdrop-blur-lg">
       <div className="flex flex-1 flex-col gap-6">
         <NavLinks userId={userId} />
       </div>

@@ -6,26 +6,29 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --color-primary-100: #fff1e6;
-  --color-primary-500: #ff7000;
+  /* Primary Color - Tech Blue */
+  --color-primary-100: #dbeafe; /* blue-100 */
+  --color-primary-500: #3b82f6; /* blue-500 */
 
-  --color-dark-100: #000000;
-  --color-dark-200: #0f1117;
-  --color-dark-300: #151821;
-  --color-dark-400: #212734;
-  --color-dark-500: #101012;
+  /* Dark Mode Palette - Slate/Deep Ocean */
+  --color-dark-100: #0f172a; /* slate-900 */
+  --color-dark-200: #1e293b; /* slate-800 */
+  --color-dark-300: #334155; /* slate-700 */
+  --color-dark-400: #475569; /* slate-600 */
+  --color-dark-500: #020617; /* slate-950 */
 
-  --color-light-400: #858ead;
-  --color-light-500: #7b8ec8;
-  --color-light-700: #dce3f1;
-  --color-light-800: #f4f6f8;
-  --color-light-850: #fdfdfd;
+  /* Light Mode Palette - Cool Grays */
+  --color-light-400: #94a3b8; /* slate-400 */
+  --color-light-500: #64748b; /* slate-500 */
+  --color-light-700: #e2e8f0; /* slate-200 */
+  --color-light-800: #f1f5f9; /* slate-100 */
+  --color-light-850: #f8fafc; /* slate-50 */
   --color-light-900: #ffffff;
 
-  --color-link-100: #1da1f2;
+  --color-link-100: #0ea5e9; /* sky-500 */
 
-  --radius-2: 8px;
-  --radius-1_5: 6px;
+  --radius-2: 16px;
+  --radius-1_5: 12px;
 
   --shadow-light-100:
     0px 12px 20px 0px rgba(184, 184, 184, 0.03),
@@ -42,8 +45,18 @@
   --breakpoint-xs: 420px;
 }
 
+/* Define Custom Animation Standard CSS Way to ensure it works */
+@keyframes bounce-fast {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+.animate-bounce-fast {
+  animation: bounce-fast 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
 :root {
-  --radius: 0.5rem;
+  --radius: 1rem;
 
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.129 0.042 264.695);
@@ -189,23 +202,23 @@
 }
 
 @utility h1-bold {
-  @apply text-[30px] leading-[42px] font-bold tracking-tighter;
+  @apply text-[32px] leading-[42px] font-extrabold tracking-tight;
 }
 
 @utility h2-bold {
-  @apply text-[24px] leading-[31.2px] font-bold;
+  @apply text-[26px] leading-[34px] font-bold tracking-tight;
 }
 
 @utility h2-semibold {
-  @apply text-[24px] leading-[31.2px] font-semibold;
+  @apply text-[26px] leading-[34px] font-semibold tracking-tight;
 }
 
 @utility h3-bold {
-  @apply text-[20px] leading-[26px] font-bold;
+  @apply text-[22px] leading-[28px] font-bold tracking-tight;
 }
 
 @utility h3-semibold {
-  @apply text-[20px] leading-[24.8px] font-semibold;
+  @apply text-[22px] leading-[28px] font-semibold tracking-tight;
 }
 
 @utility base-medium {
@@ -285,32 +298,27 @@
 }
 
 @utility primary-gradient {
-  background: linear-gradient(129deg, #ff7000 0%, #e2995f 100%);
+  background: linear-gradient(129deg, #3b82f6 0%, #60a5fa 100%);
 }
 
 @utility dark-gradient {
   background: linear-gradient(
     232deg,
-    rgba(23, 28, 35, 0.41) 0%,
-    rgba(19, 22, 28, 0.7) 100%
-  );
-  background: linear-gradient(
-    232deg,
-    rgba(23, 28, 35, 0.41) 0%,
-    rgba(19, 22, 28, 0.7) 100%
+    rgba(15, 23, 42, 0.41) 0%,
+    rgba(15, 23, 42, 0.7) 100%
   );
 }
 
 @utility light-gradient {
   background: linear-gradient(
     132deg,
-    rgba(247, 249, 255, 0.5) 0%,
-    rgba(229, 237, 255, 0.25) 100%
+    rgba(241, 245, 249, 0.5) 0%,
+    rgba(226, 232, 240, 0.25) 100%
   );
 }
 
 @utility primary-text-gradient {
-  background: linear-gradient(129deg, #ff7000 0%, #e2995f 100%);
+  background: linear-gradient(129deg, #3b82f6 0%, #60a5fa 100%);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -329,7 +337,15 @@
 }
 
 @utility card-wrapper {
-  @apply bg-light-900 shadow-light-100 dark:shadow-dark-100 dark:dark-gradient;
+  @apply bg-light-900 shadow-light-100 dark:shadow-dark-100 dark:dark-gradient dark:border dark:border-dark-400/50 dark:backdrop-blur-[10px];
+}
+
+@utility card-interactive {
+  @apply hover:shadow-light-200 dark:hover:shadow-dark-200 transition-all duration-300 ease-in-out hover:-translate-y-1;
+}
+
+@utility glassmorphism-nav {
+  @apply bg-light-900/80 backdrop-blur-lg dark:bg-dark-200/80 border-b border-light-800 dark:border-dark-400/50;
 }
 
 @utility btn {
@@ -406,11 +422,11 @@
 }
 
 .dark .mdxeditor-toolbar {
-  background: #151821 !important;
+  background: #1e293b !important; /* Match new dark-200 */
 }
 
 .dark .mdxeditor-toolbar button svg {
-  color: #858ead !important;
+  color: #94a3b8 !important; /* Match new light-400 */
 }
 
 .dark .mdxeditor-toolbar button:hover svg {
@@ -418,11 +434,11 @@
 }
 
 .dark .mdxeditor-toolbar [role="separator"] {
-  border-color: #555 !important;
+  border-color: #334155 !important; /* Match new dark-300 */
 }
 
 .markdown a {
-  color: #1da1f2;
+  color: #0ea5e9; /* Match new link-100 */
 }
 
 .markdown a,
@@ -444,7 +460,7 @@ code {
   hyphens: auto;
 
   padding: 2px;
-  color: #ff7000 !important;
+  color: #3b82f6 !important; /* Match new primary-500 */
 }
 
 .markdown pre {

@@ -7,7 +7,7 @@ import UserAvatar from "../UserAvatar";
 const UserCard = ({ _id, name, image, username }: User) => {
   return (
     <div className="w-full shadow-light100_darknone xs:w-[230px]">
-      <article className="flex-center w-full flex-col rounded-2xl border light-border background-light900_dark200 p-8">
+      <article className="flex-center w-full flex-col rounded-2xl border light-border card-wrapper card-interactive p-8">
         <UserAvatar
           id={_id}
           name={name}

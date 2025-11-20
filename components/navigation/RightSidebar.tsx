@@ -15,8 +15,8 @@ const RightSidebar = async () => {
   ] = await Promise.all([getHotQuestions(), getTopTags()]);
 
   return (
-    <section className="custom-scrollbar sticky top-0 right-0 flex h-screen w-[350px] flex-col gap-6 overflow-y-auto border-l light-border background-light900_dark200 p-6 pt-36 shadow-light-300 max-xl:hidden dark:shadow-none">
-      <div>
+    <section className="custom-scrollbar sticky top-0 right-0 flex h-screen w-[350px] flex-col gap-6 overflow-y-auto border-l border-light-800 dark:border-dark-400/50 bg-light-900/50 dark:bg-dark-200/50 p-6 pt-36 shadow-light-300 max-xl:hidden dark:shadow-none backdrop-blur-lg">
+      <div className="rounded-2xl bg-light-800/50 dark:bg-dark-300/30 p-6 shadow-sm">
         <h3 className="h3-bold text-dark200_light900">Top Questions</h3>
 
         <DataRenderer
@@ -53,7 +53,7 @@ const RightSidebar = async () => {
         />
       </div>
 
-      <div className="mt-16">
+      <div className="mt-8 rounded-2xl bg-light-800/50 dark:bg-dark-300/30 p-6 shadow-sm">
         <h3 className="h3-bold text-dark200_light900">Popular Tags</h3>
 
         <DataRenderer
